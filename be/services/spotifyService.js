@@ -8,9 +8,18 @@
  */
 const getSavedTracks = async (spotifyApi, limit = 50) => {
     try {
-        const data = await spotifyApi.getMySavedTracks({ limit, offset: 0 });
+        let allItems = [];
+        for (let offset = 0; offset < limit; offset += 50) {
+            const currentLimit = Math.min(50, limit - offset);
+            const data = await spotifyApi.getMySavedTracks({ limit: currentLimit, offset });
+            allItems = allItems.concat(data.body.items);
+
+            // If Spotify returned fewer items than requested, we've reached the end
+            if (data.body.items.length < currentLimit) break;
+        }
+
         // Map tracks to a simpler format
-        return data.body.items.map(item => ({
+        return allItems.map(item => ({
             id: item.track.id,
             name: item.track.name,
             artists: item.track.artists.map(a => a.name).join(', '),

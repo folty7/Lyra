@@ -1,6 +1,5 @@
 require('dotenv').config();
 const express = require('express');
-const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const SpotifyWebApi = require('spotify-web-api-node');
 
@@ -8,11 +7,33 @@ const app = express();
 const PORT = process.env.PORT || 8080;
 const FRONTEND_URI = process.env.FRONTEND_URI || 'http://127.0.0.1:5173';
 
-// Middleware
-app.use(cors({
-    origin: FRONTEND_URI,
-    credentials: true
-}));
+// Extensive Custom CORS Middleware for Local Development
+app.use((req, res, next) => {
+    const allowedOrigins = [FRONTEND_URI, 'http://localhost:5173', 'http://127.0.0.1:5173', 'null'];
+    const origin = req.headers.origin;
+
+    if (allowedOrigins.includes(origin)) {
+        res.setHeader('Access-Control-Allow-Origin', origin);
+    }
+
+    // Required for cookies
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization, Access-Control-Allow-Credentials');
+
+    // Chrome Private Network Access Preflight
+    if (req.headers['access-control-request-private-network']) {
+        res.setHeader('Access-Control-Allow-Private-Network', 'true');
+    }
+
+    // Handle Preflight OPTIONS rapidly
+    if (req.method === 'OPTIONS') {
+        return res.status(200).end();
+    }
+
+    next();
+});
+
 app.use(express.json());
 app.use(cookieParser());
 
@@ -35,7 +56,6 @@ const generateRandomString = function (length) {
 };
 
 const stateKey = 'spotify_auth_state';
-
 
 // --- Routes ---
 
