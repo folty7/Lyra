@@ -1,0 +1,58 @@
+const { GoogleGenAI } = require('@google/genai');
+
+/**
+ * Sends track data to Gemini to get it smartly categorized based on audio features and names.
+ * @param {Array} tracksData Array of lean track objects containing names, artists, and audio features. 
+ * @returns {Promise<Object>} JSON response mapping category names to arrays of full track URIs.
+ */
+const generateSmartSort = async (tracksData) => {
+    try {
+        const ai = new GoogleGenAI({}); // Automatically picks up GEMINI_API_KEY from environment 
+
+        const leanPayload = JSON.stringify(tracksData);
+
+        // Create the system prompt enforcing a strict JSON schema
+        const prompt = `You are a music curator AI. Your task is to analyze the provided list of Spotify tracks, their artists, and their audio features (like tempo, energy, danceability, valence, acousticness).
+    Sort these tracks into creative, vibe-based categories (e.g., "Late Night Drive", "Workout Anthems", "Chill Focus", "Upbeat Morning").
+    
+    Rules:
+    1. Every single track provided MUST be placed into exactly ONE category.
+    2. Try to create between 3 and 6 total categories. 
+    3. You must respond ONLY with a valid stringified JSON object. 
+    4. The structure of the JSON MUST strictly map string keys (the creative category name) to array of strings (the full Spotify URIs of the tracks). 
+    
+    Example payload:
+    {
+      "Late Night Drive": ["spotify:track:12345", "spotify:track:67890"],
+      "Workout Anthems": ["spotify:track:abcde", "spotify:track:fghij"]
+    }
+    
+    Track Data:
+    ${leanPayload}
+    `;
+
+        const response = await ai.models.generateContent({
+            model: 'gemini-2.5-flash',
+            contents: prompt,
+            config: {
+                responseMimeType: "application/json",
+            }
+        });
+
+        const resultText = response.text;
+
+        if (!resultText) {
+            throw new Error("AI returned empty response");
+        }
+
+        return JSON.parse(resultText);
+
+    } catch (error) {
+        console.error("AI Service Error:", error);
+        throw new Error("Failed to process tracks via AI");
+    }
+};
+
+module.exports = {
+    generateSmartSort
+};
