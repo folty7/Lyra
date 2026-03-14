@@ -67,6 +67,9 @@ const createGroupedPlaylists = async (spotifyApi, categorizedPlaylists) => {
 
             if (!createRes.ok) {
                 const errText = await createRes.text();
+                if (createRes.status === 403) {
+                    throw new Error(`Insufficient Spotify scope. Please log out and log back in to grant playlist modifying permissions. (Details: ${errText})`);
+                }
                 throw new Error(`Failed to create playlist: ${errText}`);
             }
 
@@ -83,7 +86,7 @@ const createGroupedPlaylists = async (spotifyApi, categorizedPlaylists) => {
         return results;
     } catch (error) {
         console.error('Error creating grouped playlists:', error);
-        throw new Error('Failed to create playlists on Spotify');
+        throw error;
     }
 };
 

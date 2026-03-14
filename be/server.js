@@ -67,7 +67,7 @@ app.get('/auth/login', (req, res) => {
     const scopes = ['user-read-private', 'user-read-email', 'user-library-read', 'playlist-modify-public', 'playlist-modify-private'];
 
     // Normal login flow without forcing consent dialog
-    const authorizeURL = spotifyApi.createAuthorizeURL(scopes, state);
+    const authorizeURL = spotifyApi.createAuthorizeURL(scopes, state, true);
     res.redirect(authorizeURL);
 });
 
@@ -119,7 +119,7 @@ app.get('/auth/callback', async (req, res) => {
 });
 
 // Mount protected API routes
-app.post('/auth/logout', (req, res) => {
+app.post('/api/auth/logout', (req, res) => {
     res.clearCookie('access_token', {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
