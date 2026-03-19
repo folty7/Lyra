@@ -1,0 +1,19 @@
+# Ignore dependencies
+node_modules
+npm-debug.log
+
+# Ignore environment variables (never bake secrets into an image)
+.env
+.env.local
+.env.*.local
+
+# Ignore git and IDE files
+.git
+.gitignore
+.vscode
+.idea
+.DS_Store
+
+# Ignore Docker-related files inside the build context
+Dockerfile
+.dockerignore
