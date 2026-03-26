@@ -36,7 +36,7 @@ export default function Login() {
                     </p>
                 </div>
 
-                <a href="http://127.0.0.1:8080/auth/login" className="w-full">
+                <a href={`http://${window.location.hostname}:8080/auth/login`} className="w-full">
                     <Button
                         size="lg"
                         className="w-full h-14 rounded-full bg-white/10 hover:bg-white/20 border border-white/10 text-white shadow-lg backdrop-blur-md transition-all duration-300 font-medium tracking-wide text-[15px]"

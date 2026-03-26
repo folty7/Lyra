@@ -56,8 +56,8 @@ const createGroupedPlaylists = async (spotifyApi, categorizedPlaylists) => {
 
             console.log(`[Spotify Debug] Attempting to create playlist: "${playlistName}" for User: ${userId}`);
 
-            // 2. Create the playlist manually to avoid spotify-web-api-node deprecated /me/ route
-            const createRes = await fetch(`https://api.spotify.com/v1/users/${userId}/playlists`, {
+            // 2. Create the playlist manually to avoid deprecated /v1/users/{userId}/playlists route
+            const createRes = await fetch(`https://api.spotify.com/v1/me/playlists`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${accessToken}`,
@@ -66,14 +66,14 @@ const createGroupedPlaylists = async (spotifyApi, categorizedPlaylists) => {
                 body: JSON.stringify({
                     name: playlistName,
                     description: `Created by Resonance AI - Vibes: ${playlistName}`,
-                    public: true
+                    public: false // IMPORTANT: Creating public playlists often fails for unverified Spotify apps
                 })
             });
 
             if (!createRes.ok) {
                 const errText = await createRes.text();
                 if (createRes.status === 403) {
-                    throw new Error(`Insufficient Spotify scope. Please log out and log back in to grant playlist modifying permissions. (Details: ${errText})`);
+                    throw new Error(`Forbidden (403): Spotify denied playlist creation. Your account may be restricted or require private playlists. (Details: ${errText})`);
                 }
                 throw new Error(`Failed to create playlist: ${errText}`);
             }
@@ -82,8 +82,22 @@ const createGroupedPlaylists = async (spotifyApi, categorizedPlaylists) => {
             const playlistId = playlistData.id;
             const playlistUrl = playlistData.external_urls.spotify;
 
-            // 3. Add tracks to the newly created playlist
-            await spotifyApi.addTracksToPlaylist(playlistId, trackUris);
+            // 3. Add tracks to the newly created playlist using modernized /items endpoint
+            const addRes = await fetch(`https://api.spotify.com/v1/playlists/${playlistId}/items`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    uris: trackUris
+                })
+            });
+
+            if (!addRes.ok) {
+                const addErrText = await addRes.text();
+                throw new Error(`Failed to add tracks to playlist: ${addErrText}`);
+            }
 
             results.push({ name: playlistName, id: playlistId, url: playlistUrl });
         }
