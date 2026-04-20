@@ -1,6 +1,6 @@
 const { GoogleGenAI } = require('@google/genai');
 
-const MODEL = process.env.GEMINI_MODEL || 'gemini-2.0-flash';
+const MODEL = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
 
 let client = null;
 const getClient = () => {
