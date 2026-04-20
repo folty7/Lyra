@@ -56,6 +56,7 @@ Rules:
 - Aim for 3-6 well-balanced groups; each with at least 2 tracks when possible.
 - Name each playlist concisely (max 40 chars) and write a one-sentence description.
 - Base names on the parameters actually used (e.g. "90s Rock", "Chill Indie 2020s").
+- If any field is missing or empty (genres, year, mood, tempo, language, etc.), use your knowledge of the track and artist to infer it.
 
 Return ONLY JSON: { "groups": [ { "name": string, "description": string, "uris": string[] } ] }
 
