@@ -101,3 +101,23 @@
     transform: translateY(-1px);
   }
 }
+
+/* Lyra logo — concentric-ring breathing animation */
+@keyframes lyra-ring-pulse {
+  0%, 100% { transform: scale(1); opacity: 0.6; }
+  50% { transform: scale(1.12); opacity: 0.9; }
+}
+
+@keyframes lyra-ring-pulse-slow {
+  0%, 100% { transform: scale(1); opacity: 0.3; }
+  50% { transform: scale(1.25); opacity: 0.55; }
+}
+
+@keyframes lyra-float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-6px); }
+}
+
+.animate-ring-fast { animation: lyra-ring-pulse 3s ease-in-out infinite; }
+.animate-ring-slow { animation: lyra-ring-pulse-slow 4.5s ease-in-out infinite; }
+.animate-float { animation: lyra-float 6s ease-in-out infinite; }

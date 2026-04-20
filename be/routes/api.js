@@ -1,33 +1,73 @@
 const express = require('express');
 const router = express.Router();
 const spotifyService = require('../services/spotifyService');
+const geminiService = require('../services/geminiService');
 
 // @route   GET /api/tracks
-// @desc    Test fetching user saved tracks directly
+// @desc    Fetch up to 100 saved tracks, enriched with genres + release year.
 router.get('/tracks', async (req, res) => {
     try {
-        const tracks = await spotifyService.getSavedTracks(req.spotifyApi, 10);
-        res.json({ success: true, count: tracks.length, data: tracks });
+        const limit = Math.min(parseInt(req.query.limit, 10) || 100, 100);
+        const tracks = await spotifyService.getSavedTracks(req.spotifyApi, limit);
+        const enriched = await spotifyService.enrichTracksWithGenres(req.spotifyApi, tracks);
+        res.json({ success: true, count: enriched.length, data: enriched });
     } catch (error) {
+        console.error('Tracks error:', error);
         res.status(500).json({ error: error.message });
     }
 });
 
-// @route   POST /api/playlists
-// @desc    Create playlists and add tracks
-router.post('/playlists', async (req, res) => {
-    try {
-        const { playlistName, uris } = req.body;
+// @route   GET /api/sort/parameters
+// @desc    Available grouping parameters for the UI (genre, year, mood, ...)
+router.get('/sort/parameters', (_req, res) => {
+    res.json({ success: true, parameters: geminiService.AVAILABLE_PARAMETERS });
+});
 
-        if (!playlistName || !uris || !Array.isArray(uris)) {
-            return res.status(400).json({ error: "Invalid payload. Expected playlistName and uris array." });
+// @route   POST /api/sort
+// @desc    Group the supplied tracks into playlists via Gemini.
+router.post('/sort', async (req, res) => {
+    try {
+        const { tracks, parameters, extra } = req.body;
+
+        if (!Array.isArray(tracks) || tracks.length === 0) {
+            return res.status(400).json({ error: 'tracks array is required' });
+        }
+        if (!Array.isArray(parameters) || parameters.length === 0) {
+            return res.status(400).json({ error: 'parameters must be a non-empty array (e.g. ["genre", "year"])' });
         }
 
-        const categorizedPlaylists = {
-            [playlistName]: uris
-        };
+        const groups = await geminiService.groupTracksByParameters(tracks, parameters, extra);
+        res.json({ success: true, groups });
+    } catch (error) {
+        console.error('Sort error:', error);
+        res.status(500).json({ error: error.message || 'Failed to sort tracks' });
+    }
+});
 
-        console.log("Creating playlist on Spotify...");
+// @route   POST /api/playlists
+// @desc    Create playlists on Spotify. Accepts a single { playlistName, uris } or
+//          { groups: [{ name, uris }] } for bulk creation.
+router.post('/playlists', async (req, res) => {
+    try {
+        const { playlistName, uris, groups } = req.body;
+
+        let categorizedPlaylists;
+        if (Array.isArray(groups) && groups.length > 0) {
+            categorizedPlaylists = Object.fromEntries(
+                groups
+                    .filter(g => g && g.name && Array.isArray(g.uris) && g.uris.length > 0)
+                    .map(g => [g.name, g.uris])
+            );
+            if (Object.keys(categorizedPlaylists).length === 0) {
+                return res.status(400).json({ error: 'groups must contain at least one playlist with uris' });
+            }
+        } else if (playlistName && Array.isArray(uris)) {
+            categorizedPlaylists = { [playlistName]: uris };
+        } else {
+            return res.status(400).json({ error: 'Invalid payload. Expected playlistName+uris, or groups array.' });
+        }
+
+        console.log("Creating playlist(s) on Spotify...");
         const results = await spotifyService.createGroupedPlaylists(req.spotifyApi, categorizedPlaylists);
 
         res.json({ success: true, created_playlists: results });
