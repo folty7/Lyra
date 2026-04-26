@@ -16,7 +16,7 @@ export default function Overview() {
     const navigate = useNavigate()
     const { clearAuth } = useStore()
     const {
-        tracks, topArtists, topGenres, topTracks, needsReauth,
+        tracks, topArtists, topGenres, topTracks, topLoaded, needsReauth,
         isLoading, isRefreshing, fetchTracks, lastFetchedAt
     } = useTracksStore()
     const { savedPlaylists, removePlaylist, renamePlaylist } = usePlaylistsStore()
@@ -74,16 +74,7 @@ export default function Overview() {
         }))
     }, [topGenres])
 
-    const artistData = useMemo(() => {
-        return topArtists.slice(0, 8).map(a => ({
-            label: a.name.length > 10 ? a.name.slice(0, 10) + '…' : a.name,
-            value: a.popularity || 1
-        }))
-    }, [topArtists])
-
-    const activeData = analyticsTab === 'Decades' ? decadeData
-        : analyticsTab === 'Genres' ? genreData
-        : artistData
+    const activeData = analyticsTab === 'Decades' ? decadeData : genreData
 
     const sparkA = useMemo(() => decadeData.length >= 2 ? decadeData.map(d => d.value) : [3, 5, 4, 7, 6, 9, 8, 11], [decadeData])
     const sparkB = useMemo(() => [...sparkA].reverse(), [sparkA])
@@ -170,7 +161,7 @@ export default function Overview() {
                         <div className="w-10 h-10 rounded-full bg-gradient-to-br from-yellow-300 to-amber-500 flex items-center justify-center text-black font-bold text-sm">G</div>
                         <div className="min-w-0">
                             <p className="text-[11px] text-white/50 leading-tight">TOP GENRE</p>
-                            <p className="text-sm font-medium leading-tight truncate capitalize">{topGenre?.name || (needsReauth ? '—' : 'Loading…')}</p>
+                            <p className="text-sm font-medium leading-tight truncate capitalize">{topGenre?.name || (topLoaded ? '—' : 'Loading…')}</p>
                         </div>
                     </div>
                     <div className="mt-5">
@@ -232,7 +223,7 @@ export default function Overview() {
                         )}
                         <div className="min-w-0">
                             <p className="text-[11px] text-white/50 leading-tight">TOP ARTIST</p>
-                            <p className="text-sm font-medium leading-tight truncate">{topArtist?.name || (needsReauth ? '—' : 'Loading…')}</p>
+                            <p className="text-sm font-medium leading-tight truncate">{topArtist?.name || (topLoaded ? '—' : 'Loading…')}</p>
                         </div>
                     </div>
                     <div className="mt-5">
@@ -269,11 +260,25 @@ export default function Overview() {
                             </button>
                         ))}
                     </div>
-                    <BarLineChart data={activeData} color="#ea580c" />
+                    {analyticsTab === 'Top Artists' ? (
+                        topArtists.length === 0 ? (
+                            <div className="h-[220px] flex items-center justify-center text-xs text-white/30">
+                                {topLoaded ? (needsReauth ? 'Re-authorize to load top artists.' : 'No top artists yet.') : 'Loading…'}
+                            </div>
+                        ) : (
+                            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                                {topArtists.slice(0, 8).map((a, i) => (
+                                    <ArtistCard key={a.id || i} artist={a} rank={i + 1} />
+                                ))}
+                            </div>
+                        )
+                    ) : (
+                        <BarLineChart data={activeData} color="#ea580c" />
+                    )}
                     <p className="mt-4 text-xs text-white/40">
                         {analyticsTab === 'Decades' && 'How your saved tracks distribute across release decades.'}
                         {analyticsTab === 'Genres' && 'Top genres derived from your top 50 listened artists.'}
-                        {analyticsTab === 'Top Artists' && 'Your top 8 most-listened artists, ranked by global popularity.'}
+                        {analyticsTab === 'Top Artists' && 'Your top 8 most-listened artists from Spotify.'}
                     </p>
                 </div>
 
@@ -287,7 +292,7 @@ export default function Overview() {
                     {topTracks.length === 0 ? (
                         <div className="flex-1 flex flex-col items-center justify-center text-center py-10 text-white/40">
                             <Music className="w-7 h-7 mb-2 opacity-50" />
-                            <p className="text-xs">{needsReauth ? 'Re-authorize to load.' : 'Loading…'}</p>
+                            <p className="text-xs">{topLoaded ? (needsReauth ? 'Re-authorize to load.' : 'No top tracks yet.') : 'Loading…'}</p>
                         </div>
                     ) : (
                         <div className="space-y-2 -mr-2 pr-2 overflow-y-auto max-h-[340px]">
@@ -387,6 +392,29 @@ export default function Overview() {
                 <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 bg-black/80 border border-white/10 text-white text-sm px-5 py-3 rounded-full backdrop-blur-xl shadow-lg">
                     {toast}
                 </div>
+            )}
+        </div>
+    )
+}
+
+function ArtistCard({ artist, rank }) {
+    return (
+        <div className="group relative rounded-2xl bg-white/[0.03] border border-white/[0.06] p-3 hover:bg-white/[0.05] hover:border-white/15 transition-colors">
+            <div className="relative aspect-square rounded-xl overflow-hidden mb-2.5 bg-gradient-to-br from-purple-500/20 to-orange-500/10">
+                {artist.image ? (
+                    <img src={artist.image} alt={artist.name} loading="lazy" className="w-full h-full object-cover" />
+                ) : (
+                    <div className="w-full h-full flex items-center justify-center">
+                        <Users className="w-6 h-6 text-white/40" />
+                    </div>
+                )}
+                <span className="absolute top-1.5 left-1.5 px-1.5 py-0.5 rounded-md bg-black/60 backdrop-blur-sm text-[10px] font-medium text-white/90 tabular-nums">
+                    #{rank}
+                </span>
+            </div>
+            <p className="text-sm font-medium truncate">{artist.name}</p>
+            {artist.genres?.length > 0 && (
+                <p className="text-[11px] text-white/40 truncate capitalize mt-0.5">{artist.genres.slice(0, 2).join(' · ')}</p>
             )}
         </div>
     )

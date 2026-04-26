@@ -44,34 +44,6 @@ const getSavedTracks = async (spotifyApi, limit = 1000) => {
 };
 
 /**
- * Enrich tracks with artist genres. Spotify only exposes genres on the artist
- * object, so batch-fetch unique artists and join back. Graceful on 403 — some
- * dev-mode apps don't have quota for /v1/artists, in which case we just skip.
- */
-const enrichTracksWithGenres = async (spotifyApi, tracks) => {
-    const uniqueArtistIds = [...new Set(tracks.flatMap(t => t.artistIds || []))];
-    const genresByArtistId = {};
-
-    for (let i = 0; i < uniqueArtistIds.length; i += 50) {
-        const batch = uniqueArtistIds.slice(i, i + 50);
-        try {
-            const res = await spotifyApi.getArtists(batch);
-            for (const artist of res.body.artists || []) {
-                genresByArtistId[artist.id] = artist.genres || [];
-            }
-        } catch (err) {
-            console.warn(`Artist genres fetch failed: ${err.body?.error?.message || err.message}`);
-            break;
-        }
-    }
-
-    return tracks.map(t => ({
-        ...t,
-        genres: [...new Set((t.artistIds || []).flatMap(id => genresByArtistId[id] || []))]
-    }));
-};
-
-/**
  * Creates grouped playlists on Spotify and adds tracks.
  * @param {SpotifyWebApi} spotifyApi
  * @param {Object} categorizedPlaylists Object where keys are playlist names and values are arrays of track URIs.
@@ -192,7 +164,6 @@ const getTopData = async (spotifyApi) => {
 
 module.exports = {
     getSavedTracks,
-    enrichTracksWithGenres,
     createGroupedPlaylists,
     getTopData
 };

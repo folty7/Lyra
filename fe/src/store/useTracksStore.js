@@ -15,6 +15,7 @@ export const useTracksStore = create(persist(
         topArtists: [],
         topTracks: [],
         topGenres: [],
+        topLoaded: false,
         needsReauth: false,
         isLoading: false,
         isRefreshing: false,
@@ -69,14 +70,16 @@ export const useTracksStore = create(persist(
                         topArtists: res.data.topArtists || [],
                         topTracks: res.data.topTracks || [],
                         topGenres: res.data.topGenres || [],
+                        topLoaded: true,
                         needsReauth: false
                     });
                 }
             } catch (err) {
                 if (err.response?.status === 403) {
-                    set({ needsReauth: true });
+                    set({ needsReauth: true, topLoaded: true });
                 } else {
                     console.warn('Top fetch failed:', err.message);
+                    set({ topLoaded: true });
                 }
             }
         },
@@ -86,6 +89,7 @@ export const useTracksStore = create(persist(
             topArtists: [],
             topTracks: [],
             topGenres: [],
+            topLoaded: false,
             needsReauth: false,
             isLoading: false,
             isRefreshing: false,

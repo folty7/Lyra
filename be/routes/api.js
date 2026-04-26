@@ -4,14 +4,13 @@ const spotifyService = require('../services/spotifyService');
 const geminiService = require('../services/geminiService');
 
 // @route   GET /api/tracks
-// @desc    Fetch saved tracks (default 1000, capped at 5000 server-side),
-//          enriched with genres + album art.
+// @desc    Fetch saved tracks (default 1000, capped at 5000 server-side).
+//          Genres come from /api/top instead — /v1/artists is 403 in dev mode.
 router.get('/tracks', async (req, res) => {
     try {
         const limit = parseInt(req.query.limit, 10) || 1000;
         const tracks = await spotifyService.getSavedTracks(req.spotifyApi, limit);
-        const enriched = await spotifyService.enrichTracksWithGenres(req.spotifyApi, tracks);
-        res.json({ success: true, count: enriched.length, data: enriched });
+        res.json({ success: true, count: tracks.length, data: tracks });
     } catch (error) {
         console.error('Tracks error:', error);
         res.status(500).json({ error: error.message });
