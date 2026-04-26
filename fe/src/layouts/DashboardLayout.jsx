@@ -7,14 +7,11 @@ import {
 import { useStore } from "@/store/useStore"
 import { useTracksStore } from "@/store/useTracksStore"
 import { apiClient } from "@/api/axios"
+import lyraLogo from "@/assets/lyra-logo.png"
 
 export function LyraMark({ size = 32 }) {
     return (
-        <div className="relative shrink-0" style={{ width: size, height: size }}>
-            <div className="absolute inset-0 rounded-full bg-gradient-to-br from-green-500 to-green-700 shadow-[0_0_20px_rgba(34,197,94,0.5)]" />
-            <div className="absolute inset-[18%] rounded-full bg-black/40 backdrop-blur" />
-            <div className="absolute inset-[30%] rounded-full bg-gradient-to-br from-green-400 to-green-600" />
-        </div>
+        <img src={lyraLogo} alt="Lyra Logo" className="shrink-0 object-contain drop-shadow-[0_0_15px_rgba(34,197,94,0.4)]" style={{ width: size, height: size }} />
     )
 }
 

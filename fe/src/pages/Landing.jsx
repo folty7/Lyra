@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button"
 import { Link } from "react-router-dom"
+import lyraLogo from "@/assets/lyra-logo.png"
 
 const LAUNCH_URL = typeof window !== 'undefined'
     ? `http://${window.location.hostname}:8080/auth/login`
@@ -7,11 +8,7 @@ const LAUNCH_URL = typeof window !== 'undefined'
 
 function LyraLogo({ size = 36 }) {
     return (
-        <div className="relative shrink-0" style={{ width: size, height: size }}>
-            <div className="absolute inset-0 rounded-full bg-gradient-to-br from-green-400 to-green-700 shadow-[0_0_24px_rgba(34,197,94,0.45)]" />
-            <div className="absolute inset-[18%] rounded-full bg-black/45 backdrop-blur" />
-            <div className="absolute inset-[30%] rounded-full bg-gradient-to-br from-green-300 to-green-600" />
-        </div>
+        <img src={lyraLogo} alt="Lyra Logo" className="shrink-0 object-contain drop-shadow-[0_0_15px_rgba(34,197,94,0.45)]" style={{ width: size, height: size }} />
     )
 }
 
@@ -437,7 +434,7 @@ export default function Landing() {
                                 <p className="text-white/55 text-[13px] ml-8">{step.b}</p>
                                 {step.n === 3 && (
                                     <pre className="ml-8 mt-3 text-[11px] bg-black/60 border border-white/5 rounded-lg p-3 text-white/70 overflow-x-auto">
-{`SPOTIFY_CLIENT_ID=•••••
+                                        {`SPOTIFY_CLIENT_ID=•••••
 SPOTIFY_CLIENT_SECRET=•••••
 GEMINI_API_KEY=•••••`}
                                     </pre>
