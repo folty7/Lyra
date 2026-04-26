@@ -7,16 +7,16 @@ import {
 import { useTracksStore } from "@/store/useTracksStore"
 import { usePlaylistsStore, useStore } from "@/store/useStore"
 import { apiClient } from "@/api/axios"
-import { Sparkline, BarLineChart } from "@/components/dashboard/charts"
+import { BarLineChart } from "@/components/dashboard/charts"
 import { useNavigate } from "react-router-dom"
 
-const ANALYTICS_TABS = ['Decades', 'Genres', 'Top Artists']
+const ANALYTICS_TABS = ['Decades', 'Top Artists']
 
 export default function Overview() {
     const navigate = useNavigate()
     const { clearAuth } = useStore()
     const {
-        tracks, topArtists, topGenres, topTracks, topLoaded, needsReauth,
+        tracks, topArtists, topTracks, topLoaded, needsReauth,
         isLoading, isRefreshing, fetchTracks, lastFetchedAt
     } = useTracksStore()
     const { savedPlaylists, removePlaylist, renamePlaylist } = usePlaylistsStore()
@@ -28,7 +28,6 @@ export default function Overview() {
 
     const trackCount = tracks.length
 
-    const topGenre = topGenres[0] || null
     const topArtist = topArtists[0] || null
 
     // Library snapshot stats (replace the meaningless gauge)
@@ -67,18 +66,6 @@ export default function Overview() {
             .map(d => ({ label: `${d}s`, value: buckets[d] }))
     }, [tracks])
 
-    const genreData = useMemo(() => {
-        return topGenres.slice(0, 8).map(g => ({
-            label: g.name.length > 12 ? g.name.slice(0, 12) + '…' : g.name,
-            value: g.count
-        }))
-    }, [topGenres])
-
-    const activeData = analyticsTab === 'Decades' ? decadeData : genreData
-
-    const sparkA = useMemo(() => decadeData.length >= 2 ? decadeData.map(d => d.value) : [3, 5, 4, 7, 6, 9, 8, 11], [decadeData])
-    const sparkB = useMemo(() => [...sparkA].reverse(), [sparkA])
-
     const pushToSpotify = async (playlist) => {
         setPushingIds(prev => new Set(prev).add(playlist.id))
         try {
@@ -109,7 +96,7 @@ export default function Overview() {
                     <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium text-amber-100">Re-authorize to unlock top stats</p>
                         <p className="text-xs text-amber-100/70 mt-0.5">
-                            Lyra needs the new <code className="text-[11px] bg-black/30 px-1 rounded">user-top-read</code> permission to fetch your top artists and genres.
+                            Lyra needs the new <code className="text-[11px] bg-black/30 px-1 rounded">user-top-read</code> permission to fetch your top artists and tracks.
                             Log out and back in to grant it.
                         </p>
                     </div>
@@ -124,7 +111,7 @@ export default function Overview() {
 
             {/* TOP STATS ROW */}
             <section className="grid grid-cols-1 lg:grid-cols-12 gap-5 mb-5">
-                <div className="lg:col-span-5 flex items-center justify-between">
+                <div className="lg:col-span-8 flex items-center justify-between">
                     <div>
                         <p className="text-[11px] uppercase tracking-[0.18em] text-white/40 mb-1 flex items-center gap-1.5">
                             <span className="w-3 h-3 rounded-full border border-white/30 inline-block" />
@@ -145,36 +132,18 @@ export default function Overview() {
                         </button>
                     </div>
                 </div>
-                <div className="lg:col-span-7 flex items-center justify-between">
+                <div className="lg:col-span-4 flex items-center justify-between">
                     <div>
                         <p className="text-[11px] uppercase tracking-[0.18em] text-white/40 mb-1 flex items-center gap-1.5">
                             <span className="w-3 h-3 rounded-full border border-white/30 inline-block" />
                             From Spotify
                         </p>
-                        <h2 className="text-3xl font-medium tracking-tight">Top Picks</h2>
+                        <h2 className="text-3xl font-medium tracking-tight">Top Artist</h2>
                     </div>
                 </div>
 
-                {/* Top Genre */}
-                <StatCard className="lg:col-span-3">
-                    <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-green-300 to-emerald-500 flex items-center justify-center text-black font-bold text-sm">G</div>
-                        <div className="min-w-0">
-                            <p className="text-[11px] text-white/50 leading-tight">TOP GENRE</p>
-                            <p className="text-sm font-medium leading-tight truncate capitalize">{topGenre?.name || (topLoaded ? '—' : 'Loading…')}</p>
-                        </div>
-                    </div>
-                    <div className="mt-5">
-                        <p className="text-2xl font-semibold tracking-tight">{topGenre?.count ?? 0}</p>
-                        <p className="text-[11px] text-white/40 mt-0.5">of your top 50 artists</p>
-                    </div>
-                    <div className="mt-3 -mx-1">
-                        <Sparkline data={sparkA} color="#22c55e" height={48} />
-                    </div>
-                </StatCard>
-
-                {/* Library Snapshot — replaces the meaningless gauge */}
-                <div className="lg:col-span-5 rounded-3xl bg-gradient-to-b from-white/[0.05] to-white/[0.02] border border-white/[0.06] p-6 relative overflow-hidden">
+                {/* Library Snapshot */}
+                <div className="lg:col-span-8 rounded-3xl bg-gradient-to-b from-white/[0.05] to-white/[0.02] border border-white/[0.06] p-6 relative overflow-hidden">
                     <div className="flex items-center justify-between mb-4">
                         <div>
                             <p className="text-3xl font-semibold tracking-tight">{trackCount.toLocaleString() || (isLoading ? '…' : '0')}</p>
@@ -215,24 +184,20 @@ export default function Overview() {
 
                 {/* Top Artist */}
                 <StatCard className="lg:col-span-4">
-                    <div className="flex items-center gap-3">
-                        {topArtist?.image ? (
-                            <img src={topArtist.image} alt={topArtist.name} className="w-10 h-10 rounded-full object-cover" />
-                        ) : (
-                            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-400 to-indigo-600 flex items-center justify-center text-white font-bold text-sm">A</div>
-                        )}
-                        <div className="min-w-0">
-                            <p className="text-[11px] text-white/50 leading-tight">TOP ARTIST</p>
-                            <p className="text-sm font-medium leading-tight truncate">{topArtist?.name || (topLoaded ? '—' : 'Loading…')}</p>
+                    <p className="text-[11px] uppercase tracking-[0.15em] text-white/40 mb-3">Top Artist</p>
+                    {topArtist?.image ? (
+                        <div className="aspect-square rounded-2xl overflow-hidden bg-white/[0.04] mb-3">
+                            <img src={topArtist.image} alt={topArtist.name} className="w-full h-full object-cover" />
                         </div>
-                    </div>
-                    <div className="mt-5">
-                        <p className="text-2xl font-semibold tracking-tight">{topArtist?.popularity ?? 0}</p>
-                        <p className="text-[11px] text-white/40 mt-0.5">global popularity score</p>
-                    </div>
-                    <div className="mt-3 -mx-1">
-                        <Sparkline data={sparkB} color="#f43f5e" height={48} />
-                    </div>
+                    ) : (
+                        <div className="aspect-square rounded-2xl bg-gradient-to-br from-purple-500/30 to-green-500/20 flex items-center justify-center mb-3">
+                            <Users className="w-10 h-10 text-white/40" />
+                        </div>
+                    )}
+                    <p className="text-lg font-medium tracking-tight truncate">
+                        {topArtist?.name || (topLoaded ? '—' : 'Loading…')}
+                    </p>
+                    <p className="text-[11px] text-white/40 mt-0.5">your most-listened artist</p>
                 </StatCard>
             </section>
 
@@ -273,11 +238,10 @@ export default function Overview() {
                             </div>
                         )
                     ) : (
-                        <BarLineChart data={activeData} color="#16a34a" />
+                        <BarLineChart data={decadeData} color="#16a34a" />
                     )}
                     <p className="mt-4 text-xs text-white/40">
                         {analyticsTab === 'Decades' && 'How your saved tracks distribute across release decades.'}
-                        {analyticsTab === 'Genres' && 'Top genres derived from your top 50 listened artists.'}
                         {analyticsTab === 'Top Artists' && 'Your top 8 most-listened artists from Spotify.'}
                     </p>
                 </div>
@@ -413,9 +377,6 @@ function ArtistCard({ artist, rank }) {
                 </span>
             </div>
             <p className="text-sm font-medium truncate">{artist.name}</p>
-            {artist.genres?.length > 0 && (
-                <p className="text-[11px] text-white/40 truncate capitalize mt-0.5">{artist.genres.slice(0, 2).join(' · ')}</p>
-            )}
         </div>
     )
 }

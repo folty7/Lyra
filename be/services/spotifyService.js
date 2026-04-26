@@ -118,9 +118,10 @@ const createGroupedPlaylists = async (spotifyApi, categorizedPlaylists) => {
 };
 
 /**
- * Fetch the user's Spotify-curated top artists and tracks. Top artists
- * include genres natively, so this works around the /v1/artists 403 issue
- * that affects dev-mode apps. Requires the `user-top-read` OAuth scope.
+ * Fetch the user's Spotify-curated top artists and tracks. Note: artist
+ * `genres`, `popularity`, and `followers` are deprecated by Spotify and now
+ * return empty/null, so we don't surface them. Requires the `user-top-read`
+ * OAuth scope.
  */
 const getTopData = async (spotifyApi) => {
     const [artistsRes, tracksRes] = await Promise.all([
@@ -131,9 +132,7 @@ const getTopData = async (spotifyApi) => {
     const topArtists = (artistsRes.body.items || []).map(a => ({
         id: a.id,
         name: a.name,
-        genres: a.genres || [],
-        image: a.images?.[1]?.url || a.images?.[0]?.url || a.images?.[2]?.url || null,
-        popularity: a.popularity
+        image: a.images?.[1]?.url || a.images?.[0]?.url || a.images?.[2]?.url || null
     }));
 
     const topTracks = (tracksRes.body.items || []).map(t => {
@@ -149,17 +148,7 @@ const getTopData = async (spotifyApi) => {
         };
     });
 
-    const genreCounts = {};
-    for (const a of topArtists) {
-        for (const g of a.genres) {
-            genreCounts[g] = (genreCounts[g] || 0) + 1;
-        }
-    }
-    const topGenres = Object.entries(genreCounts)
-        .sort((a, b) => b[1] - a[1])
-        .map(([name, count]) => ({ name, count }));
-
-    return { topArtists, topTracks, topGenres };
+    return { topArtists, topTracks };
 };
 
 module.exports = {

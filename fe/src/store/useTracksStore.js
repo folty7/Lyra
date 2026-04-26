@@ -14,7 +14,6 @@ export const useTracksStore = create(persist(
         tracks: [],
         topArtists: [],
         topTracks: [],
-        topGenres: [],
         topLoaded: false,
         needsReauth: false,
         isLoading: false,
@@ -69,7 +68,6 @@ export const useTracksStore = create(persist(
                     set({
                         topArtists: res.data.topArtists || [],
                         topTracks: res.data.topTracks || [],
-                        topGenres: res.data.topGenres || [],
                         topLoaded: true,
                         needsReauth: false
                     });
@@ -88,7 +86,6 @@ export const useTracksStore = create(persist(
             tracks: [],
             topArtists: [],
             topTracks: [],
-            topGenres: [],
             topLoaded: false,
             needsReauth: false,
             isLoading: false,
@@ -103,7 +100,6 @@ export const useTracksStore = create(persist(
             tracks: state.tracks,
             topArtists: state.topArtists,
             topTracks: state.topTracks,
-            topGenres: state.topGenres,
             lastFetchedAt: state.lastFetchedAt
         })
     }
