@@ -18,6 +18,26 @@ router.get('/tracks', async (req, res) => {
     }
 });
 
+// @route   GET /api/top
+// @desc    Spotify-curated top artists, tracks, and aggregated genres. Works
+//          around the /v1/artists 403 issue by using /me/top/* directly.
+router.get('/top', async (req, res) => {
+    try {
+        const data = await spotifyService.getTopData(req.spotifyApi);
+        res.json({ success: true, ...data });
+    } catch (error) {
+        const status = error.statusCode || error.body?.error?.status || 500;
+        if (status === 403) {
+            return res.status(403).json({
+                error: 'Top stats require the user-top-read scope. Please log out and log back in to re-authorize.',
+                needsReauth: true
+            });
+        }
+        console.error('Top error:', error);
+        res.status(500).json({ error: error.message || 'Failed to fetch top data' });
+    }
+});
+
 // @route   GET /api/sort/parameters
 // @desc    Available grouping parameters for the UI (genre, year, mood, ...)
 router.get('/sort/parameters', (_req, res) => {

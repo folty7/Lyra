@@ -77,7 +77,7 @@ export default function DashboardLayout() {
 
                     <div className="mt-auto pt-6">
                         <div className="relative rounded-2xl bg-gradient-to-b from-white/[0.04] to-white/[0.02] border border-white/[0.08] p-5 text-center overflow-hidden">
-                            <div className="absolute -top-6 left-1/2 -translate-x-1/2 w-12 h-12 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center shadow-lg shadow-orange-500/30">
+                            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center shadow-lg shadow-orange-500/30">
                                 <HelpCircle className="w-6 h-6 text-white" />
                             </div>
                             <p className="mt-6 text-sm font-medium">Help Center</p>
@@ -140,10 +140,9 @@ function SidebarLink({ to, icon: Icon, label, end }) {
             to={to}
             end={end}
             className={({ isActive }) =>
-                `group flex items-center gap-3 h-10 px-3 rounded-full text-sm transition-all ${
-                    isActive
-                        ? 'bg-white/[0.06] border border-white/15 text-white'
-                        : 'border border-transparent text-white/60 hover:text-white hover:bg-white/[0.04]'
+                `group flex items-center gap-3 h-10 px-3 rounded-full text-sm transition-all ${isActive
+                    ? 'bg-white/[0.06] border border-white/15 text-white'
+                    : 'border border-transparent text-white/60 hover:text-white hover:bg-white/[0.04]'
                 }`
             }
         >

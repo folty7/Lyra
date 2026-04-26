@@ -64,7 +64,7 @@ app.get('/auth/login', (req, res) => {
     res.cookie(stateKey, state);
 
     // Requesting permissions
-    const scopes = ['user-read-private', 'user-read-email', 'user-library-read', 'playlist-modify-public', 'playlist-modify-private'];
+    const scopes = ['user-read-private', 'user-read-email', 'user-library-read', 'playlist-modify-public', 'playlist-modify-private', 'user-top-read'];
 
     // Normal login flow without forcing consent dialog
     const authorizeURL = spotifyApi.createAuthorizeURL(scopes, state, true);

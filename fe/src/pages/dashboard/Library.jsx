@@ -9,7 +9,6 @@ const SORTS = [
     { key: 'artist', label: 'Artist A–Z' },
     { key: 'year-desc', label: 'Year (new → old)' },
     { key: 'year-asc', label: 'Year (old → new)' },
-    { key: 'popularity', label: 'Most popular' },
 ]
 
 export default function Library() {
@@ -17,7 +16,6 @@ export default function Library() {
     const [query, setQuery] = useState("")
     const [sort, setSort] = useState('recent')
     const [sortOpen, setSortOpen] = useState(false)
-    const [visibleCount, setVisibleCount] = useState(PAGE_SIZE)
     const sentinelRef = useRef(null)
 
     // Filter + sort
@@ -37,15 +35,22 @@ export default function Library() {
             case 'artist': arr.sort((a, b) => (a.artists || '').localeCompare(b.artists || '')); break
             case 'year-desc': arr.sort((a, b) => (b.year || 0) - (a.year || 0)); break
             case 'year-asc': arr.sort((a, b) => (a.year || 9999) - (b.year || 9999)); break
-            case 'popularity': arr.sort((a, b) => (b.popularity || 0) - (a.popularity || 0)); break
             case 'recent':
             default: arr.sort((a, b) => new Date(b.addedAt || 0) - new Date(a.addedAt || 0)); break
         }
         return arr
     }, [tracks, query, sort])
 
-    // Reset visible window when filter/sort changes
-    useEffect(() => { setVisibleCount(PAGE_SIZE) }, [query, sort])
+    // Reset the visible window when the filter/sort changes — the canonical
+    // "derived state via set-during-render" pattern. Avoids a useEffect+setState
+    // cascade. https://react.dev/reference/react/useState#storing-information-from-previous-renders
+    const filterKey = `${query}|${sort}`
+    const [appliedKey, setAppliedKey] = useState(filterKey)
+    const [visibleCount, setVisibleCount] = useState(PAGE_SIZE)
+    if (filterKey !== appliedKey) {
+        setAppliedKey(filterKey)
+        setVisibleCount(PAGE_SIZE)
+    }
 
     // Infinite scroll: render more rows when sentinel enters viewport
     useEffect(() => {
@@ -150,12 +155,11 @@ export default function Library() {
                 <>
                     <div className="rounded-3xl bg-gradient-to-b from-white/[0.04] to-white/[0.02] border border-white/[0.06] overflow-hidden">
                         {/* Header row */}
-                        <div className="hidden sm:grid grid-cols-[48px_1fr_180px_80px_70px_60px] gap-4 px-5 py-3 border-b border-white/[0.06] text-[10px] uppercase tracking-[0.15em] text-white/40">
+                        <div className="hidden sm:grid grid-cols-[48px_1fr_220px_80px_60px] gap-4 px-5 py-3 border-b border-white/[0.06] text-[10px] uppercase tracking-[0.15em] text-white/40">
                             <span>#</span>
                             <span>Title</span>
                             <span>Album</span>
                             <span>Year</span>
-                            <span className="text-right">Pop.</span>
                             <span className="text-right">Time</span>
                         </div>
 
@@ -182,7 +186,7 @@ export default function Library() {
 
 function TrackRow({ track, index }) {
     return (
-        <div className="grid grid-cols-[48px_1fr_60px] sm:grid-cols-[48px_1fr_180px_80px_70px_60px] gap-4 px-5 py-2.5 items-center hover:bg-white/[0.03] transition-colors border-b border-white/[0.03] last:border-b-0">
+        <div className="grid grid-cols-[48px_1fr_60px] sm:grid-cols-[48px_1fr_220px_80px_60px] gap-4 px-5 py-2.5 items-center hover:bg-white/[0.03] transition-colors border-b border-white/[0.03] last:border-b-0">
             <span className="text-[11px] text-white/30 tabular-nums w-6 text-right">{index + 1}</span>
             <div className="flex items-center gap-3 min-w-0">
                 <AlbumArt url={track.albumImageSmall || track.albumImage} alt={track.album} />
@@ -193,9 +197,6 @@ function TrackRow({ track, index }) {
             </div>
             <p className="hidden sm:block text-xs text-white/50 truncate">{track.album}</p>
             <p className="hidden sm:block text-xs text-white/50">{track.year || '—'}</p>
-            <div className="hidden sm:flex justify-end">
-                <PopularityBar value={track.popularity} />
-            </div>
             <p className="text-xs text-white/40 text-right tabular-nums">{formatDuration(track.durationMs)}</p>
         </div>
     )
@@ -216,18 +217,6 @@ function AlbumArt({ url, alt }) {
             loading="lazy"
             className="w-10 h-10 rounded-md object-cover shrink-0 bg-white/[0.04]"
         />
-    )
-}
-
-function PopularityBar({ value }) {
-    const v = Math.max(0, Math.min(100, value || 0))
-    return (
-        <div className="flex items-center gap-1.5">
-            <div className="w-12 h-1 rounded-full bg-white/[0.08] overflow-hidden">
-                <div className="h-full bg-gradient-to-r from-orange-500 to-amber-400" style={{ width: `${v}%` }} />
-            </div>
-            <span className="text-[10px] text-white/40 tabular-nums w-5 text-right">{v}</span>
-        </div>
     )
 }
 
