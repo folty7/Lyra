@@ -8,13 +8,12 @@ import { apiClient, getStoredGeminiKey } from "@/api/axios"
 
 const DEFAULT_PARAMS = ['genre', 'year']
 const PARAM_LABELS = {
-    genre: 'Genre',
-    year: 'Year / Decade',
-    mood: 'Mood',
     artist: 'Artist',
-    popularity: 'Popularity',
-    language: 'Language',
-    tempo: 'Tempo'
+    album: 'Album',
+    year: 'Year / Decade',
+    genre: 'Genre',
+    mood: 'Mood',
+    activity: 'Activity'
 }
 const SAMPLE_SIZES = [50, 100, 200, 500]
 

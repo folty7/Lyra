@@ -16,14 +16,17 @@ const getClient = (overrideKey) => {
     return serverClient;
 };
 
+// Spotify deprecated artist `genres`, `popularity`, and audio features in 2025.
+// What we still get reliably per track: name, artists, album, year, durationMs.
+// Anything else (genre, mood, activity) must be inferred by the LLM from its
+// training knowledge of the artist + track.
 const PARAMETER_HINTS = {
-    genre: 'primary artist genre(s)',
+    artist: 'group by performing artist (one playlist per artist, or cluster collaborators)',
+    album: 'group tracks by the album / EP they belong to',
     year: 'release year or decade (e.g. 1990s, 2010s, 2020s)',
-    mood: 'overall mood/energy (e.g. chill, upbeat, melancholic, hype)',
-    artist: 'the performing artist',
-    popularity: 'Spotify popularity score (0-100 global)',
-    language: 'language of the lyrics',
-    tempo: 'perceived tempo (slow / medium / fast)'
+    genre: 'primary musical genre — INFER from your knowledge of the artist and track (Spotify no longer exposes genres)',
+    mood: 'overall mood/energy (e.g. chill, upbeat, melancholic, hype) — INFER from your knowledge of the track and artist style',
+    activity: 'best-fit listening context (e.g. workout, focus, road trip, party, late night, study) — INFER from the track\'s energy and style'
 };
 
 /**
@@ -48,9 +51,8 @@ const groupTracksByParameters = async (tracks, parameters, extra = '', apiKey = 
         uri: t.uri,
         name: t.name,
         artists: t.artists,
-        genres: t.genres || [],
-        year: t.year,
-        popularity: t.popularity
+        album: t.album,
+        year: t.year
     }));
 
     const prompt = `You are a music curator. Group the following Spotify tracks into playlists using these parameters:\n${paramSpec}\n${extra ? `\nAdditional instructions: ${extra}\n` : ''}
@@ -58,8 +60,8 @@ Rules:
 - Every track URI must appear in exactly one group.
 - Aim for 3-6 well-balanced groups; each with at least 2 tracks when possible.
 - Name each playlist concisely (max 40 chars) and write a one-sentence description.
-- Base names on the parameters actually used (e.g. "90s Rock", "Chill Indie 2020s").
-- If any field is missing or empty (genres, year, mood, tempo, language, etc.), use your knowledge of the track and artist to infer it.
+- Base names on the parameters actually used (e.g. "90s Rock", "Chill Indie 2020s", "Workout Hype").
+- The input only contains: name, artists, album, year. For any selected parameter not directly present (genre, mood, activity), use your training knowledge of the artist and track to infer it. Do not refuse or skip a track because metadata is missing.
 
 Return ONLY JSON: { "groups": [ { "name": string, "description": string, "uris": string[] } ] }
 

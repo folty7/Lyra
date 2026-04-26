@@ -215,11 +215,10 @@ export default function Overview() {
                             <button
                                 key={tab}
                                 onClick={() => setAnalyticsTab(tab)}
-                                className={`h-8 px-4 rounded-full text-xs transition-all ${
-                                    analyticsTab === tab
-                                        ? 'bg-white/[0.08] border border-white/15 text-white'
-                                        : 'border border-transparent text-white/50 hover:text-white'
-                                }`}
+                                className={`h-8 px-4 rounded-full text-xs transition-all ${analyticsTab === tab
+                                    ? 'bg-white/[0.08] border border-white/15 text-white'
+                                    : 'border border-transparent text-white/50 hover:text-white'
+                                    }`}
                             >
                                 {tab}
                             </button>
