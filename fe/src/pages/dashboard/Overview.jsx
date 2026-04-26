@@ -21,7 +21,7 @@ export default function Overview() {
     } = useTracksStore()
     const { savedPlaylists, removePlaylist, renamePlaylist } = usePlaylistsStore()
 
-    const [analyticsTab, setAnalyticsTab] = useState('Decades')
+    const [analyticsTab, setAnalyticsTab] = useState('Top Artists')
     const [pushingIds, setPushingIds] = useState(new Set())
     const [toast, setToast] = useState("")
     const flashToast = (m) => { setToast(m); setTimeout(() => setToast(""), 3500) }
@@ -109,99 +109,30 @@ export default function Overview() {
                 </div>
             )}
 
-            {/* TOP STATS ROW */}
-            <section className="grid grid-cols-1 lg:grid-cols-12 gap-5 mb-5">
-                <div className="lg:col-span-8 flex items-center justify-between">
-                    <div>
-                        <p className="text-[11px] uppercase tracking-[0.18em] text-white/40 mb-1 flex items-center gap-1.5">
-                            <span className="w-3 h-3 rounded-full border border-white/30 inline-block" />
-                            All Tracks
-                        </p>
-                        <h2 className="text-3xl font-medium tracking-tight">My Library</h2>
-                    </div>
-                    <div className="flex items-center gap-2">
-                        <span className="hidden sm:block text-[11px] text-white/40 mr-1">{refreshLabel}</span>
-                        <button
-                            onClick={() => fetchTracks({ force: true })}
-                            disabled={isLoading || isRefreshing}
-                            className="h-9 px-4 rounded-full bg-white/[0.04] border border-white/[0.06] text-xs flex items-center gap-2 hover:bg-white/[0.08] hover:border-green-400/30 disabled:opacity-50 transition-colors"
-                            title="Refetch your library from Spotify"
-                        >
-                            <RefreshCw className={`w-3.5 h-3.5 ${(isLoading || isRefreshing) ? 'animate-spin' : ''}`} />
-                            {isRefreshing ? 'Refreshing…' : 'Refresh'}
-                        </button>
-                    </div>
-                </div>
-                <div className="lg:col-span-4 flex items-center justify-between">
-                    <div>
-                        <p className="text-[11px] uppercase tracking-[0.18em] text-white/40 mb-1 flex items-center gap-1.5">
-                            <span className="w-3 h-3 rounded-full border border-white/30 inline-block" />
-                            From Spotify
-                        </p>
-                        <h2 className="text-3xl font-medium tracking-tight">Top Artist</h2>
-                    </div>
-                </div>
-
-                {/* Library Snapshot */}
-                <div className="lg:col-span-8 rounded-3xl bg-gradient-to-b from-white/[0.05] to-white/[0.02] border border-white/[0.06] p-6 relative overflow-hidden">
-                    <div className="flex items-center justify-between mb-4">
-                        <div>
-                            <p className="text-3xl font-semibold tracking-tight">{trackCount.toLocaleString() || (isLoading ? '…' : '0')}</p>
-                            <p className="text-xs text-white/50 mt-0.5">tracks in your saved library</p>
-                        </div>
-                        <div className="text-right">
-                            <p className="text-[11px] uppercase tracking-[0.15em] text-white/40">Snapshot</p>
-                        </div>
-                    </div>
-
-                    <div className="grid grid-cols-3 gap-3 mt-5">
-                        <SnapshotStat
-                            icon={Users}
-                            value={snapshot?.artistCount?.toLocaleString() || '—'}
-                            label="artists"
-                            tone="green"
-                        />
-                        <SnapshotStat
-                            icon={Disc3}
-                            value={snapshot?.albumCount?.toLocaleString() || '—'}
-                            label="albums"
-                            tone="emerald"
-                        />
-                        <SnapshotStat
-                            icon={Calendar}
-                            value={snapshot?.yearSpan ? `${snapshot.yearSpan.to - snapshot.yearSpan.from}y` : '—'}
-                            label="span"
-                            tone="violet"
-                        />
-                    </div>
-                    {snapshot?.yearSpan && (
-                        <p className="text-[11px] text-white/40 mt-4">
-                            Oldest <span className="text-white/70">{snapshot.yearSpan.from}</span> · newest <span className="text-white/70">{snapshot.yearSpan.to}</span>
-                            {snapshot.totalHours > 0 && <> · {snapshot.totalHours.toLocaleString()} hours of music</>}
-                        </p>
-                    )}
-                </div>
-
-                {/* Top Artist */}
-                <StatCard className="lg:col-span-4">
-                    <p className="text-[11px] uppercase tracking-[0.15em] text-white/40 mb-3">Top Artist</p>
-                    {topArtist?.image ? (
-                        <div className="aspect-square rounded-2xl overflow-hidden bg-white/[0.04] mb-3">
-                            <img src={topArtist.image} alt={topArtist.name} className="w-full h-full object-cover" />
-                        </div>
-                    ) : (
-                        <div className="aspect-square rounded-2xl bg-gradient-to-br from-purple-500/30 to-green-500/20 flex items-center justify-center mb-3">
-                            <Users className="w-10 h-10 text-white/40" />
-                        </div>
-                    )}
-                    <p className="text-lg font-medium tracking-tight truncate">
-                        {topArtist?.name || (topLoaded ? '—' : 'Loading…')}
+            {/* PAGE HEADER */}
+            <div className="flex items-center justify-between mb-5">
+                <div>
+                    <p className="text-[11px] uppercase tracking-[0.18em] text-white/40 mb-1 flex items-center gap-1.5">
+                        <span className="w-3 h-3 rounded-full border border-white/30 inline-block" />
+                        All Tracks
                     </p>
-                    <p className="text-[11px] text-white/40 mt-0.5">your most-listened artist</p>
-                </StatCard>
-            </section>
+                    <h2 className="text-3xl font-medium tracking-tight">My Library</h2>
+                </div>
+                <div className="flex items-center gap-2">
+                    <span className="hidden sm:block text-[11px] text-white/40 mr-1">{refreshLabel}</span>
+                    <button
+                        onClick={() => fetchTracks({ force: true })}
+                        disabled={isLoading || isRefreshing}
+                        className="h-9 px-4 rounded-full bg-white/[0.04] border border-white/[0.06] text-xs flex items-center gap-2 hover:bg-white/[0.08] hover:border-green-400/30 disabled:opacity-50 transition-colors"
+                        title="Refetch your library from Spotify"
+                    >
+                        <RefreshCw className={`w-3.5 h-3.5 ${(isLoading || isRefreshing) ? 'animate-spin' : ''}`} />
+                        {isRefreshing ? 'Refreshing…' : 'Refresh'}
+                    </button>
+                </div>
+            </div>
 
-            {/* MIDDLE ROW */}
+            {/* FIRST ROW: Analytics & Top Tracks */}
             <section className="grid grid-cols-1 lg:grid-cols-12 gap-5 mb-5">
                 <div className="lg:col-span-8 rounded-3xl bg-gradient-to-b from-white/[0.05] to-white/[0.02] border border-white/[0.06] p-6">
                     <div className="flex items-center justify-between mb-5">
@@ -276,6 +207,67 @@ export default function Overview() {
                         </div>
                     )}
                 </div>
+            </section>
+
+            {/* SECOND ROW: Snapshot & Top Artist */}
+            <section className="grid grid-cols-1 lg:grid-cols-12 gap-5 mb-5">
+                {/* Library Snapshot */}
+                <div className="lg:col-span-8 rounded-3xl bg-gradient-to-b from-white/[0.05] to-white/[0.02] border border-white/[0.06] p-6 relative overflow-hidden">
+                    <div className="flex items-center justify-between mb-4">
+                        <div>
+                            <p className="text-3xl font-semibold tracking-tight">{trackCount.toLocaleString() || (isLoading ? '…' : '0')}</p>
+                            <p className="text-xs text-white/50 mt-0.5">tracks in your saved library</p>
+                        </div>
+                        <div className="text-right">
+                            <p className="text-[11px] uppercase tracking-[0.15em] text-white/40">Snapshot</p>
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-3 gap-3 mt-5">
+                        <SnapshotStat
+                            icon={Users}
+                            value={snapshot?.artistCount?.toLocaleString() || '—'}
+                            label="artists"
+                            tone="green"
+                        />
+                        <SnapshotStat
+                            icon={Disc3}
+                            value={snapshot?.albumCount?.toLocaleString() || '—'}
+                            label="albums"
+                            tone="emerald"
+                        />
+                        <SnapshotStat
+                            icon={Calendar}
+                            value={snapshot?.yearSpan ? `${snapshot.yearSpan.to - snapshot.yearSpan.from}y` : '—'}
+                            label="span"
+                            tone="violet"
+                        />
+                    </div>
+                    {snapshot?.yearSpan && (
+                        <p className="text-[11px] text-white/40 mt-4">
+                            Oldest <span className="text-white/70">{snapshot.yearSpan.from}</span> · newest <span className="text-white/70">{snapshot.yearSpan.to}</span>
+                            {snapshot.totalHours > 0 && <> · {snapshot.totalHours.toLocaleString()} hours of music</>}
+                        </p>
+                    )}
+                </div>
+
+                {/* Top Artist */}
+                <StatCard className="lg:col-span-4">
+                    <p className="text-[11px] uppercase tracking-[0.15em] text-white/40 mb-3">Top Artist</p>
+                    {topArtist?.image ? (
+                        <div className="aspect-square rounded-2xl overflow-hidden bg-white/[0.04] mb-3">
+                            <img src={topArtist.image} alt={topArtist.name} className="w-full h-full object-cover" />
+                        </div>
+                    ) : (
+                        <div className="aspect-square rounded-2xl bg-gradient-to-br from-purple-500/30 to-green-500/20 flex items-center justify-center mb-3">
+                            <Users className="w-10 h-10 text-white/40" />
+                        </div>
+                    )}
+                    <p className="text-lg font-medium tracking-tight truncate">
+                        {topArtist?.name || (topLoaded ? '—' : 'Loading…')}
+                    </p>
+                    <p className="text-[11px] text-white/40 mt-0.5">your most-listened artist</p>
+                </StatCard>
             </section>
 
             {/* SAVED PLAYLISTS + AI SORT CTA */}

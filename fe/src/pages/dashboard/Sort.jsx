@@ -58,7 +58,11 @@ export default function Sort() {
             })
             if (res.data.success) setGroups(res.data.groups || [])
         } catch (err) {
-            setError(err.response?.data?.error || "Gemini sorting failed.")
+            if (err.response?.data?.error === 'QUOTA_EXCEEDED') {
+                setError('QUOTA_EXCEEDED')
+            } else {
+                setError(err.response?.data?.error || "Gemini sorting failed.")
+            }
         } finally { setIsSorting(false) }
     }
 
@@ -73,6 +77,11 @@ export default function Sort() {
         addManyPlaylists(groups.map(g => ({ name: g.name, description: g.description, uris: g.uris })))
         flashToast(`${groups.length} playlist(s) saved`)
         setGroups([])
+    }
+    const discardAll = () => {
+        if (!groups.length) return
+        setGroups([])
+        flashToast(`Discarded all suggestions`)
     }
     const discardGroup = (idx) => setGroups(prev => prev.filter((_, i) => i !== idx))
 
@@ -169,10 +178,25 @@ export default function Sort() {
                             {isSorting ? "Asking Gemini…" : `Sort ${Math.min(sampleSize, tracks.length)} tracks with AI`}
                         </Button>
 
-                        {error && <p className="text-rose-400 text-xs mt-3 text-center">{error}</p>}
+                        {error && error !== 'QUOTA_EXCEEDED' && <p className="text-rose-400 text-xs mt-3 text-center">{error}</p>}
                     </div>
 
-                    {!hasUserKey && (
+                    {error === 'QUOTA_EXCEEDED' && !hasUserKey && (
+                        <div className="rounded-3xl bg-rose-500/10 border border-rose-500/20 p-5">
+                            <p className="text-sm font-medium text-rose-200 mb-2">API limit reached!</p>
+                            <p className="text-xs text-rose-200/70 mb-4 leading-relaxed">
+                                The shared default API key has exhausted its quota. To continue sorting tracks, please provide your own free Gemini API key.
+                            </p>
+                            <Link
+                                to="/dashboard/settings"
+                                className="inline-flex h-10 w-full items-center justify-center rounded-full bg-rose-500/20 hover:bg-rose-500/30 text-sm font-medium text-rose-100 transition-colors border border-rose-500/30"
+                            >
+                                <SettingsIcon className="w-4 h-4 mr-2" /> Add Your API Key
+                            </Link>
+                        </div>
+                    )}
+
+                    {!hasUserKey && error !== 'QUOTA_EXCEEDED' && (
                         <Link
                             to="/dashboard/settings"
                             className="flex items-center gap-3 rounded-2xl bg-white/[0.03] border border-white/[0.06] hover:border-green-400/30 transition-colors p-4 group"
@@ -195,9 +219,14 @@ export default function Sort() {
                         <div className="flex items-center justify-between mb-4">
                             <h3 className="text-xl font-medium">Suggestions</h3>
                             {groups.length > 0 && (
-                                <button onClick={keepAll} className="text-xs text-green-400 hover:text-green-300 font-medium flex items-center gap-1">
-                                    <Plus className="w-3.5 h-3.5" /> Keep all
-                                </button>
+                                <div className="flex items-center gap-3">
+                                    <button onClick={keepAll} className="text-xs text-green-400 hover:text-green-300 font-medium flex items-center gap-1">
+                                        <Plus className="w-3.5 h-3.5" /> Keep all
+                                    </button>
+                                    <button onClick={discardAll} className="text-xs text-white/50 hover:text-white/80 font-medium flex items-center gap-1">
+                                        <Trash2 className="w-3.5 h-3.5" /> Discard all
+                                    </button>
+                                </div>
                             )}
                         </div>
 

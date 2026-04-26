@@ -24,8 +24,8 @@ const PARAMETER_HINTS = {
     artist: 'group by performing artist (one playlist per artist, or cluster collaborators)',
     album: 'group tracks by the album / EP they belong to',
     year: 'release year or decade (e.g. 1990s, 2010s, 2020s)',
-    genre: 'primary musical genre — INFER from your knowledge of the artist and track (Spotify no longer exposes genres)',
-    mood: 'overall mood/energy (e.g. chill, upbeat, melancholic, hype) — INFER from your knowledge of the track and artist style',
+    genre: 'strictly classify tracks into cohesive, highly specific musical genres and sub-genres based on their sound, origin, and characteristics. Rely deeply on your extensive musical knowledge base to infer accurate genres even for lesser-known tracks.',
+    mood: 'analyze the acoustic properties, tempo, lyrical themes, and emotional resonance of each track. Group them by nuanced moods or emotional states (e.g., deeply melancholic, euphoric, high-energy adrenaline, tranquil chill, aggressive, nostalgic). Be highly perceptive.',
     activity: 'best-fit listening context (e.g. workout, focus, road trip, party, late night, study) — INFER from the track\'s energy and style'
 };
 
@@ -68,31 +68,40 @@ Return ONLY JSON: { "groups": [ { "name": string, "description": string, "uris":
 Tracks:
 ${JSON.stringify(trackSummaries, null, 2)}`;
 
-    const response = await ai.models.generateContent({
-        model: MODEL,
-        contents: prompt,
-        config: {
-            responseMimeType: 'application/json',
-            responseSchema: {
-                type: 'object',
-                properties: {
-                    groups: {
-                        type: 'array',
-                        items: {
-                            type: 'object',
-                            properties: {
-                                name: { type: 'string' },
-                                description: { type: 'string' },
-                                uris: { type: 'array', items: { type: 'string' } }
-                            },
-                            required: ['name', 'description', 'uris']
+    let response;
+    try {
+        response = await ai.models.generateContent({
+            model: MODEL,
+            contents: prompt,
+            config: {
+                responseMimeType: 'application/json',
+                responseSchema: {
+                    type: 'object',
+                    properties: {
+                        groups: {
+                            type: 'array',
+                            items: {
+                                type: 'object',
+                                properties: {
+                                    name: { type: 'string' },
+                                    description: { type: 'string' },
+                                    uris: { type: 'array', items: { type: 'string' } }
+                                },
+                                required: ['name', 'description', 'uris']
+                            }
                         }
-                    }
-                },
-                required: ['groups']
+                    },
+                    required: ['groups']
+                }
             }
+        });
+    } catch (err) {
+        console.error('Gemini API Error:', err);
+        if (err.status === 429 || err.message?.includes('429') || err.message?.toLowerCase().includes('quota') || err.message?.toLowerCase().includes('exhausted')) {
+            throw new Error('QUOTA_EXCEEDED');
         }
-    });
+        throw err;
+    }
 
     let parsed;
     try {
