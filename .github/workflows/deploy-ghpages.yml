@@ -43,6 +43,9 @@ jobs:
         working-directory: fe
         run: npm run build:ghpages
 
+      - name: Rename entry to index.html
+        run: mv fe/dist-ghpages/landing.html fe/dist-ghpages/index.html
+
       - uses: actions/upload-pages-artifact@v3
         with:
           path: fe/dist-ghpages
