@@ -15,7 +15,7 @@ export const setStoredGeminiKey = (key) => {
 };
 
 export const apiClient = axios.create({
-    baseURL: `http://${window.location.hostname}:8080/api`,
+    baseURL: (import.meta.env.VITE_BACKEND_URL || `http://${window.location.hostname}:8080`) + '/api',
     withCredentials: true
 });
 

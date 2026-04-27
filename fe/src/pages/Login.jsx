@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button"
+import { Link } from "react-router-dom"
 
 function LyraLogo() {
     return (
@@ -86,7 +87,10 @@ export default function Login() {
                 </a>
 
                 <p className="text-[11px] text-white/30 mt-6">
-                    We only read your library. Playlists stay private by default.
+                    We only read your library. Playlists stay private by default.{" "}
+                    <Link to="/privacy" className="underline hover:text-white/60 transition-colors">Privacy Policy</Link>
+                    {" · "}
+                    <Link to="/terms" className="underline hover:text-white/60 transition-colors">Terms</Link>
                 </p>
             </div>
         </div>

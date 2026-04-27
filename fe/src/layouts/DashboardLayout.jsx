@@ -36,7 +36,7 @@ export default function DashboardLayout() {
                 if (res.data.success) {
                     setUser(res.data.user)
                 }
-            }).catch(() => {})
+            }).catch(() => { })
         }
     }, [user, setUser])
 

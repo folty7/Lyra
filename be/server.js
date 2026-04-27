@@ -67,7 +67,7 @@ app.get('/auth/login', (req, res) => {
     const scopes = ['user-read-private', 'user-read-email', 'user-library-read', 'playlist-modify-public', 'playlist-modify-private', 'user-top-read'];
 
     // Normal login flow without forcing consent dialog
-    const authorizeURL = spotifyApi.createAuthorizeURL(scopes, state, true);
+    const authorizeURL = spotifyApi.createAuthorizeURL(scopes, state, false);
     res.redirect(authorizeURL);
 });
 

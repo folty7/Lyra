@@ -1,10 +1,11 @@
 import { Button } from "@/components/ui/button"
 import { Link } from "react-router-dom"
 import lyraLogo from "@/assets/lyra-logo.png"
+import iphoneMockup from "@/assets/iphone-mockup-suggestions.png"
+import macbookMockup from "@/assets/Macbook-Mockup-dashboard.png"
 
-const LAUNCH_URL = typeof window !== 'undefined'
-    ? `http://${window.location.hostname}:8080/auth/login`
-    : '#'
+const backendUrl = import.meta.env.VITE_BACKEND_URL || (typeof window !== 'undefined' ? `http://${window.location.hostname}:8080` : '');
+const LAUNCH_URL = `${backendUrl}/auth/login`;
 
 function LyraLogo({ size = 36 }) {
     return (
@@ -12,217 +13,6 @@ function LyraLogo({ size = 36 }) {
     )
 }
 
-function MiniGauge() {
-    const segments = [
-        { color: '#16a34a', from: 0, to: 0.2 },
-        { color: '#059669', from: 0.2, to: 0.4 },
-        { color: '#34d399', from: 0.4, to: 0.6 },
-        { color: '#a78bfa', from: 0.6, to: 0.8 },
-        { color: '#22c55e', from: 0.8, to: 1 },
-    ]
-    const cx = 60, cy = 56, r = 42
-    const polar = (t) => {
-        const angle = Math.PI - t * Math.PI
-        return [cx + r * Math.cos(angle), cy - r * Math.sin(angle)]
-    }
-    const arc = (from, to) => {
-        const [x1, y1] = polar(from); const [x2, y2] = polar(to)
-        return `M ${x1} ${y1} A ${r} ${r} 0 0 1 ${x2} ${y2}`
-    }
-    const [mx, my] = polar(0.35)
-    return (
-        <svg viewBox="0 0 120 70" className="w-full">
-            {segments.map((s, i) => (
-                <path key={i} d={arc(s.from + 0.02, s.to - 0.02)} stroke={s.color} strokeWidth="9" strokeLinecap="round" fill="none" />
-            ))}
-            <circle cx={mx} cy={my} r="6" fill="white" />
-            <rect x={mx - 2.5} y={my - 2.5} width="5" height="5" rx="1" fill="#16a34a" />
-        </svg>
-    )
-}
-
-function MiniSparkline({ color = '#22c55e', up = true }) {
-    const data = up ? [4, 8, 6, 10, 8, 12, 11, 14] : [14, 11, 12, 8, 10, 6, 8, 4]
-    const w = 120, h = 32
-    const max = Math.max(...data), min = Math.min(...data), range = max - min || 1
-    const stepX = w / (data.length - 1)
-    const pts = data.map((v, i) => [i * stepX, h - ((v - min) / range) * (h - 6) - 3])
-    const path = pts.map(([x, y], i) => `${i === 0 ? 'M' : 'L'} ${x.toFixed(1)} ${y.toFixed(1)}`).join(' ')
-    return (
-        <svg viewBox={`0 0 ${w} ${h}`} className="w-full">
-            <path d={path} stroke={color} strokeWidth="1.5" fill="none" strokeLinecap="round" />
-        </svg>
-    )
-}
-
-function LaptopMockup() {
-    return (
-        <div className="relative mx-auto w-full max-w-5xl">
-            <div className="relative rounded-t-xl bg-gradient-to-b from-zinc-800 to-zinc-900 border border-white/10 border-b-0 p-3 shadow-[0_30px_80px_rgba(0,0,0,0.6)]">
-                <div className="absolute top-2 left-1/2 -translate-x-1/2 h-1.5 w-16 rounded-full bg-zinc-700" />
-                <div className="rounded-md overflow-hidden aspect-[16/10] bg-[#040a06] relative">
-                    {/* warm glows */}
-                    <div className="absolute -top-[10%] -right-[5%] h-56 w-56 rounded-full bg-green-500/30 blur-3xl pointer-events-none" />
-                    <div className="absolute bottom-0 left-[10%] h-40 w-40 rounded-full bg-green-500/15 blur-3xl pointer-events-none" />
-
-                    <div className="relative flex h-full text-[9px]">
-                        {/* Sidebar */}
-                        <div className="w-[18%] border-r border-white/[0.06] p-3 flex flex-col gap-1.5">
-                            <div className="flex items-center gap-1.5 mb-3">
-                                <LyraLogo size={14} />
-                                <span className="text-white font-semibold text-[10px]">Lyra</span>
-                            </div>
-                            <div className="bg-white/[0.06] border border-white/15 rounded-full px-2 py-1 text-white text-[8px]">Dashboard</div>
-                            <div className="text-white/50 px-2 py-1 text-[8px]">Library</div>
-                            <div className="text-white/50 px-2 py-1 text-[8px]">Analytics</div>
-                            <p className="mt-2 text-white/30 text-[7px] tracking-widest px-2">AI TOOLS</p>
-                            <div className="text-white/50 px-2 py-1 text-[8px]">AI Sort</div>
-                            <div className="text-white/50 px-2 py-1 text-[8px]">Discover</div>
-                        </div>
-                        {/* Main */}
-                        <div className="flex-1 p-3">
-                            <div className="flex items-center gap-2 mb-3">
-                                <div className="flex-1 h-5 rounded-full bg-white/[0.04] border border-white/[0.06]" />
-                                <div className="h-5 w-5 rounded-full bg-white/[0.04] border border-white/[0.06]" />
-                                <div className="h-5 px-2 rounded-full bg-white/[0.04] border border-white/[0.06] flex items-center gap-1">
-                                    <div className="h-3 w-3 rounded-full bg-gradient-to-br from-green-400 to-green-600" />
-                                    <span className="text-white/70 text-[7px]">Listener</span>
-                                </div>
-                            </div>
-                            <div className="grid grid-cols-12 gap-2 mb-2">
-                                <div className="col-span-3 rounded-lg bg-white/[0.04] border border-white/[0.06] p-2">
-                                    <p className="text-white/50 text-[7px]">TOP</p>
-                                    <p className="text-white text-[9px] font-medium">Indie Pop</p>
-                                    <p className="text-white text-[12px] font-semibold mt-0.5">12</p>
-                                    <MiniSparkline color="#22c55e" up />
-                                </div>
-                                <div className="col-span-5 rounded-lg bg-white/[0.04] border border-white/[0.06] p-2">
-                                    <p className="text-white text-[14px] font-semibold leading-none">$380,005</p>
-                                    <p className="text-green-400 text-[7px] mt-0.5">+5 (1.30)</p>
-                                    <div className="mt-1"><MiniGauge /></div>
-                                </div>
-                                <div className="col-span-4 rounded-lg bg-white/[0.04] border border-white/[0.06] p-2">
-                                    <p className="text-white/50 text-[7px]">ARTIST</p>
-                                    <p className="text-white text-[9px] font-medium">The Strokes</p>
-                                    <p className="text-white text-[12px] font-semibold mt-0.5">8</p>
-                                    <MiniSparkline color="#f43f5e" />
-                                </div>
-                            </div>
-                            <div className="grid grid-cols-12 gap-2">
-                                <div className="col-span-7 rounded-lg bg-white/[0.04] border border-white/[0.06] p-2">
-                                    <p className="text-white text-[8px] font-medium mb-1">Listening Activity</p>
-                                    <div className="flex gap-1 mb-1">
-                                        <span className="text-[6px] px-1.5 py-0.5 rounded-full bg-white/[0.08] text-white">Decades</span>
-                                        <span className="text-[6px] px-1.5 py-0.5 text-white/50">Genres</span>
-                                    </div>
-                                    <svg viewBox="0 0 200 50" className="w-full h-10">
-                                        <path d="M0 30 L25 22 L50 28 L75 16 L100 10 L125 18 L150 22 L175 14 L200 24" stroke="#16a34a" strokeWidth="1.5" fill="none" />
-                                        <path d="M0 38 L25 34 L50 32 L75 36 L100 30 L125 32 L150 38 L175 34 L200 36" stroke="#059669" strokeWidth="1.5" fill="none" />
-                                        <path d="M0 42 L25 40 L50 44 L75 38 L100 42 L125 40 L150 44 L175 42 L200 40" stroke="#a78bfa" strokeWidth="1.5" fill="none" />
-                                    </svg>
-                                </div>
-                                <div className="col-span-5 rounded-lg bg-white/[0.04] border border-white/[0.06] p-2">
-                                    <p className="text-white text-[8px] font-medium mb-1.5">Saved Playlists</p>
-                                    {['Sunset Drive', 'Late Night', 'Throwback'].map((n, i) => {
-                                        const c = ['from-cyan-400 to-blue-500', 'from-teal-400 to-green-500', 'from-emerald-400 to-green-500'][i]
-                                        return (
-                                            <div key={i} className="flex items-center gap-1.5 mb-1">
-                                                <div className={`h-3 w-3 rounded-full bg-gradient-to-br ${c}`} />
-                                                <span className="text-white text-[7px] flex-1">{n}</span>
-                                                <span className="text-white/40 text-[6px]">14</span>
-                                            </div>
-                                        )
-                                    })}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div className="mx-auto h-3 bg-gradient-to-b from-zinc-700 to-zinc-800 border-x border-white/10 rounded-b-xl" style={{ width: '105%', marginLeft: '-2.5%' }} />
-            <div className="mx-auto h-1 bg-zinc-900 rounded-b-2xl" style={{ width: '50%' }} />
-        </div>
-    )
-}
-
-function MobileMockup() {
-    return (
-        <div className="relative mx-auto w-[240px] rounded-[2.5rem] bg-gradient-to-b from-zinc-800 to-zinc-900 border border-white/10 p-2 shadow-[0_20px_60px_rgba(0,0,0,0.6)]">
-            <div className="absolute top-3 left-1/2 -translate-x-1/2 h-5 w-20 rounded-full bg-black z-10" />
-            <div className="rounded-[2rem] overflow-hidden aspect-[9/19] bg-[#040a06]">
-                <div className="relative h-full w-full p-4 text-[10px]">
-                    <div className="absolute -top-[10%] -right-[10%] h-40 w-40 rounded-full bg-green-500/30 blur-3xl" />
-                    <div className="absolute bottom-[10%] -left-[10%] h-32 w-32 rounded-full bg-green-500/15 blur-3xl" />
-
-                    <div className="relative pt-8 mb-3 flex items-center justify-between">
-                        <span className="text-white font-medium text-xs">Saved</span>
-                        <span className="text-white/40 text-[9px]">3</span>
-                    </div>
-
-                    <div className="relative space-y-2">
-                        {[
-                            { n: "Sunset Drive", d: "Golden-hour indie", c: 14, color: 'from-cyan-400 to-blue-500' },
-                            { n: "Late Night Studio", d: "Lo-fi & ambient", c: 22, color: 'from-teal-400 to-green-500' },
-                            { n: "Throwback 2000s", d: "Pop anthems", c: 17, color: 'from-emerald-400 to-green-500' }
-                        ].map((p, i) => (
-                            <div key={i} className="rounded-2xl bg-white/[0.04] border border-white/[0.06] p-2.5">
-                                <div className="flex items-center gap-2 mb-2">
-                                    <div className={`h-7 w-7 rounded-full bg-gradient-to-br ${p.color} shrink-0`} />
-                                    <div className="min-w-0">
-                                        <p className="text-white text-[10px] font-medium truncate">{p.n}</p>
-                                        <p className="text-white/50 text-[8px]">{p.d}</p>
-                                    </div>
-                                </div>
-                                <div className="flex gap-1">
-                                    <div className="flex-1 h-5 rounded-full bg-green-500/90 text-white text-[7px] flex items-center justify-center font-medium">
-                                        Push
-                                    </div>
-                                    <div className="flex-1 h-5 rounded-full bg-white/[0.05] border border-white/10 text-white/70 text-[7px] flex items-center justify-center">
-                                        Remove
-                                    </div>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </div>
-        </div>
-    )
-}
-
-function HeroPanelMockup() {
-    return (
-        <div className="relative mx-auto w-full max-w-md rounded-[1.75rem] bg-gradient-to-b from-zinc-800 to-zinc-900 border border-white/10 p-2.5 shadow-[0_30px_80px_rgba(0,0,0,0.6)]">
-            <div className="rounded-[1.25rem] overflow-hidden aspect-[4/5] bg-[#040a06]">
-                <div className="relative h-full w-full p-6 flex flex-col items-center justify-center text-center">
-                    <div className="absolute -top-[10%] -right-[10%] h-60 w-60 rounded-full bg-green-500/35 blur-3xl" />
-                    <div className="absolute -bottom-[10%] -left-[10%] h-52 w-52 rounded-full bg-green-500/20 blur-3xl" />
-
-                    <div className="relative">
-                        <LyraLogo size={64} />
-                    </div>
-                    <h3 className="relative text-white text-3xl font-semibold tracking-tight mt-5 bg-gradient-to-b from-white to-green-200/80 bg-clip-text text-transparent">
-                        Lyra
-                    </h3>
-                    <p className="relative text-[11px] text-white/60 mt-2 px-4">
-                        AI-curated playlists from your saved library.
-                    </p>
-                    <div className="relative mt-6 h-9 w-44 rounded-full bg-gradient-to-r from-green-500 to-green-600 text-white text-[11px] font-medium flex items-center justify-center gap-1.5 shadow-[0_8px_20px_rgba(34,197,94,0.4)]">
-                        <svg viewBox="0 0 24 24" fill="currentColor" className="h-3.5 w-3.5">
-                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.59 14.41c-.19.3-.58.39-.88.2-2.41-1.47-5.44-1.8-9.01-.99-.34.08-.68-.14-.76-.48-.08-.34.14-.68.48-.76 3.91-.89 7.27-.51 9.96 1.14.3.19.39.58.21.89z" />
-                        </svg>
-                        Connect with Spotify
-                    </div>
-
-                    {/* mini gauge inset */}
-                    <div className="relative mt-6 w-32 opacity-90">
-                        <MiniGauge />
-                    </div>
-                </div>
-            </div>
-        </div>
-    )
-}
 
 const FEATURES = [
     { icon: "🎧", title: "Your full library", body: "Pulls the 100 newest saved tracks from your Spotify account automatically." },
@@ -319,8 +109,9 @@ export default function Landing() {
                         </div>
                     </div>
 
-                    <div className="flex items-center justify-center">
-                        <HeroPanelMockup />
+                    <div className="flex items-center justify-center relative">
+                        <div className="absolute inset-0 bg-green-500/20 blur-[120px] rounded-full" />
+                        <img src={macbookMockup} alt="Macbook App Dashboard" className="relative z-10 w-full max-w-2xl mx-auto drop-shadow-2xl hover:scale-[1.02] transition-transform duration-500" />
                     </div>
                 </div>
             </section>
@@ -354,12 +145,16 @@ export default function Landing() {
                     </p>
                 </div>
 
-                <div className="mb-20">
-                    <LaptopMockup />
+                <div className="mb-20 relative">
+                    <div className="absolute inset-0 bg-green-500/10 blur-[100px] rounded-full" />
+                    <img src={macbookMockup} alt="Macbook App Dashboard Showcase" className="relative z-10 w-full max-w-5xl mx-auto drop-shadow-2xl" />
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-12 items-center">
-                    <MobileMockup />
+                    <div className="relative flex justify-center">
+                        <div className="absolute inset-0 bg-green-500/20 blur-[80px] rounded-full" />
+                        <img src={iphoneMockup} alt="iPhone App Suggestions Showcase" className="relative z-10 w-[350px] md:w-[500px] drop-shadow-2xl hover:-translate-y-2 transition-transform duration-500" />
+                    </div>
                     <div className="space-y-4 max-w-md">
                         <h3 className="text-3xl font-semibold text-white tracking-tight">
                             Your saved playlists, your rules.
@@ -456,7 +251,7 @@ GEMINI_API_KEY=•••••`}
 
                 <div className="grid md:grid-cols-2 gap-4">
                     <a
-                        href="mailto:foland717@gmail.com"
+                        href="mailto:ondrej4a@gmail.com"
                         className={`${cardClass} p-6 flex items-start gap-4 group`}
                     >
                         <div className="h-11 w-11 rounded-xl bg-green-500/15 border border-green-400/30 flex items-center justify-center shrink-0 text-xl">
@@ -465,7 +260,7 @@ GEMINI_API_KEY=•••••`}
                         <div>
                             <h3 className="text-white font-medium text-[15px] mb-1">Email</h3>
                             <p className="text-white/60 text-[13px] group-hover:text-green-300 transition-colors">
-                                foland717@gmail.com
+                                ondrej4a@gmail.com
                             </p>
                         </div>
                     </a>
@@ -489,7 +284,7 @@ GEMINI_API_KEY=•••••`}
                 </div>
 
                 <form
-                    action="mailto:foland717@gmail.com"
+                    action="mailto:ondrej4a@gmail.com"
                     method="post"
                     encType="text/plain"
                     className={`${cardClass} p-6 sm:p-8 mt-4`}
@@ -565,6 +360,8 @@ GEMINI_API_KEY=•••••`}
                     <Link to="/login" className="hover:text-white transition-colors">Login</Link>
                     <a href="#setup" className="hover:text-white transition-colors">Setup</a>
                     <a href="#contact" className="hover:text-white transition-colors">Contact</a>
+                    <Link to="/privacy" className="hover:text-white transition-colors">Privacy</Link>
+                    <Link to="/terms" className="hover:text-white transition-colors">Terms</Link>
                 </div>
             </footer>
         </div>
