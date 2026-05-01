@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button"
 import { Link } from "react-router-dom"
+import ContactForm from "@/components/ContactForm"
 import lyraLogo from "@/assets/lyra-logo.png"
 import iphoneMockup from "@/assets/iphone-mockup-suggestions.png"
 import macbookMockup from "@/assets/Macbook-Mockup-dashboard.png"
@@ -283,43 +284,7 @@ GEMINI_API_KEY=•••••`}
                     </a>
                 </div>
 
-                <form
-                    action="mailto:ondrej4a@gmail.com"
-                    method="post"
-                    encType="text/plain"
-                    className={`${cardClass} p-6 sm:p-8 mt-4`}
-                >
-                    <h3 className="text-white font-medium text-lg mb-5">Or drop a quick message</h3>
-                    <div className="grid sm:grid-cols-2 gap-3 mb-3">
-                        <input
-                            name="name"
-                            type="text"
-                            required
-                            placeholder="Your name"
-                            className="h-11 bg-white/[0.04] border border-white/[0.08] rounded-full px-4 text-white placeholder-white/30 focus:outline-none focus:border-green-500/40 focus:ring-1 focus:ring-green-500/30 text-[14px]"
-                        />
-                        <input
-                            name="email"
-                            type="email"
-                            required
-                            placeholder="your@email.com"
-                            className="h-11 bg-white/[0.04] border border-white/[0.08] rounded-full px-4 text-white placeholder-white/30 focus:outline-none focus:border-green-500/40 focus:ring-1 focus:ring-green-500/30 text-[14px]"
-                        />
-                    </div>
-                    <textarea
-                        name="message"
-                        required
-                        rows={4}
-                        placeholder="What's on your mind?"
-                        className="w-full bg-white/[0.04] border border-white/[0.08] rounded-2xl px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:border-green-500/40 focus:ring-1 focus:ring-green-500/30 text-[14px] resize-none mb-4"
-                    />
-                    <Button
-                        type="submit"
-                        className="h-11 rounded-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-400 hover:to-green-500 border-0 text-white font-medium text-[14px] px-6"
-                    >
-                        Send message
-                    </Button>
-                </form>
+                <ContactForm />
             </section>
 
             {/* Final CTA */}
