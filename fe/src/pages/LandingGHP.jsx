@@ -198,7 +198,7 @@ export default function LandingGHP() {
                         {[
                             { n: 1, t: "Create a Spotify Developer app", b: <>Visit <span className="text-green-300">developer.spotify.com/dashboard</span>, create an app, and copy the Client ID + Secret. Set the redirect URI to your deployment URL.</> },
                             { n: 2, t: "Grab a Gemini API key", b: <>Generate one at <span className="text-green-300">aistudio.google.com/apikey</span>. The free tier is plenty for personal use.</> },
-                            { n: 3, t: "Clone the repo and configure", b: <>Clone <span className="text-green-300">folty7/Resonance_AI</span> and follow the setup instructions in the README.</> }
+                            { n: 3, t: "Clone the repo and configure", b: <>Clone <span className="text-green-300">folty7/Lyra</span> and follow the setup instructions in the README.</> }
                         ].map((step) => (
                             <div key={step.n} className="rounded-2xl bg-black/30 border border-white/[0.06] p-5">
                                 <div className="flex items-center gap-2 mb-2">
@@ -243,7 +243,7 @@ GEMINI_API_KEY=•••••`}
                         </div>
                     </a>
                     <a
-                        href="https://github.com/folty7/Resonance_AI"
+                        href="https://github.com/folty7/Lyra"
                         target="_blank"
                         rel="noreferrer"
                         className={`${cardClass} p-6 flex items-start gap-4 group`}
@@ -254,7 +254,7 @@ GEMINI_API_KEY=•••••`}
                         <div>
                             <h3 className="text-white font-medium text-[15px] mb-1">GitHub</h3>
                             <p className="text-white/60 text-[13px] group-hover:text-green-300 transition-colors">
-                                folty7/Resonance_AI
+                                folty7/Lyra
                             </p>
                         </div>
                     </a>

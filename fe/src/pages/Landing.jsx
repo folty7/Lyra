@@ -266,7 +266,7 @@ GEMINI_API_KEY=•••••`}
                     </a>
 
                     <a
-                        href="https://github.com/folty7/Resonance_AI"
+                        href="https://github.com/folty7/Lyra"
                         target="_blank"
                         rel="noreferrer"
                         className={`${cardClass} p-6 flex items-start gap-4 group`}
@@ -277,7 +277,7 @@ GEMINI_API_KEY=•••••`}
                         <div>
                             <h3 className="text-white font-medium text-[15px] mb-1">GitHub</h3>
                             <p className="text-white/60 text-[13px] group-hover:text-green-300 transition-colors">
-                                folty7/Resonance_AI
+                                folty7/Lyra
                             </p>
                         </div>
                     </a>
