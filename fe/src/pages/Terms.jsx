@@ -77,9 +77,12 @@ export default function Terms() {
                             </a>. Lyra requests the minimum scopes necessary:
                         </p>
                         <ul className="list-disc list-inside space-y-1 ml-2">
+                            <li className={liClass}><code className="text-green-300 text-[12px] bg-white/[0.05] px-1.5 py-0.5 rounded">user-read-private</code> — read your subscription level and country.</li>
+                            <li className={liClass}><code className="text-green-300 text-[12px] bg-white/[0.05] px-1.5 py-0.5 rounded">user-read-email</code> — read your account email for display in the dashboard.</li>
                             <li className={liClass}><code className="text-green-300 text-[12px] bg-white/[0.05] px-1.5 py-0.5 rounded">user-library-read</code> — read your saved tracks.</li>
                             <li className={liClass}><code className="text-green-300 text-[12px] bg-white/[0.05] px-1.5 py-0.5 rounded">user-top-read</code> — read your top tracks and artists for dashboard statistics.</li>
-                            <li className={liClass}><code className="text-green-300 text-[12px] bg-white/[0.05] px-1.5 py-0.5 rounded">playlist-modify-private</code> — create private playlists on your behalf when you choose to push them.</li>
+                            <li className={liClass}><code className="text-green-300 text-[12px] bg-white/[0.05] px-1.5 py-0.5 rounded">playlist-modify-private</code> — create private playlists on your behalf.</li>
+                            <li className={liClass}><code className="text-green-300 text-[12px] bg-white/[0.05] px-1.5 py-0.5 rounded">playlist-modify-public</code> — create public playlists on your behalf if you choose.</li>
                         </ul>
                     </div>
 

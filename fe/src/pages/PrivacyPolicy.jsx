@@ -57,13 +57,18 @@ export default function PrivacyPolicy() {
                         <h2 className={h2Class}>1. Data we collect</h2>
                         <p className={pClass}>Lyra accesses the following data from your Spotify account via the official Spotify Web API:</p>
                         <ul className="list-disc list-inside space-y-1 ml-2 mb-3">
-                            <li className={liClass}>Your display name and profile picture — shown in the dashboard header.</li>
+                            <li className={liClass}>Your display name, profile picture, country, and account email — shown in the dashboard header.</li>
                             <li className={liClass}>Your 100 most recently saved tracks (title, artist, album, duration, popularity, release year).</li>
                             <li className={liClass}>Your top tracks and top artists (used for overview statistics).</li>
                         </ul>
                         <p className={pClass}>
-                            We do <strong className="text-white/80">not</strong> collect your email address, payment information, listening history beyond what is
-                            listed above, or any other personal data from Spotify.
+                            We do <strong className="text-white/80">not</strong> store your Spotify email or any other Spotify data on our servers.
+                            It is read once per session for display purposes only and discarded when your session ends.
+                            We do not collect payment information or listening history beyond what is listed above.
+                        </p>
+                        <p className={pClass}>
+                            If you use the contact form on this site, your name and email address are processed by Web3Forms
+                            (see section 3) solely to deliver your message to us.
                         </p>
                     </div>
 
@@ -79,20 +84,29 @@ export default function PrivacyPolicy() {
 
                     <div className={sectionClass}>
                         <h2 className={h2Class}>3. Third-party services</h2>
-                        <p className={pClass}>Lyra integrates with two external services:</p>
-                        <ul className="list-disc list-inside space-y-1 ml-2">
+                        <p className={pClass}>Lyra integrates with the following external services:</p>
+                        <ul className="list-disc list-inside space-y-2 ml-2">
                             <li className={liClass}>
                                 <strong className="text-white/80">Spotify</strong> — authentication and library access are handled via
-                                Spotify OAuth 2.0. Lyra requests only the minimum required scopes:
+                                Spotify OAuth 2.0. Lyra requests the following scopes:
+                                {" "}<code className="text-green-300 text-[12px] bg-white/[0.05] px-1.5 py-0.5 rounded">user-read-private</code>,
+                                {" "}<code className="text-green-300 text-[12px] bg-white/[0.05] px-1.5 py-0.5 rounded">user-read-email</code>,
                                 {" "}<code className="text-green-300 text-[12px] bg-white/[0.05] px-1.5 py-0.5 rounded">user-library-read</code>,
-                                {" "}<code className="text-green-300 text-[12px] bg-white/[0.05] px-1.5 py-0.5 rounded">user-top-read</code>, and
-                                {" "}<code className="text-green-300 text-[12px] bg-white/[0.05] px-1.5 py-0.5 rounded">playlist-modify-private</code>.
+                                {" "}<code className="text-green-300 text-[12px] bg-white/[0.05] px-1.5 py-0.5 rounded">user-top-read</code>,
+                                {" "}<code className="text-green-300 text-[12px] bg-white/[0.05] px-1.5 py-0.5 rounded">playlist-modify-private</code>, and
+                                {" "}<code className="text-green-300 text-[12px] bg-white/[0.05] px-1.5 py-0.5 rounded">playlist-modify-public</code>.
                             </li>
                             <li className={liClass}>
                                 <strong className="text-white/80">Google Gemini AI</strong> — track metadata (titles, artists, release years, popularity scores)
                                 is sent to the Gemini API to generate playlist groupings. No personally identifying information beyond
                                 track metadata is included in these requests. Google's privacy policy applies to this processing:
                                 {" "}<a href="https://policies.google.com/privacy" target="_blank" rel="noreferrer" className="text-green-300 hover:underline">policies.google.com/privacy</a>.
+                            </li>
+                            <li className={liClass}>
+                                <strong className="text-white/80">Web3Forms</strong> — if you submit the contact form, your name and email address
+                                are transmitted to Web3Forms solely to deliver your message to us. They are not stored by us.
+                                Web3Forms' privacy policy applies:{" "}
+                                <a href="https://web3forms.com/privacy" target="_blank" rel="noreferrer" className="text-green-300 hover:underline">web3forms.com/privacy</a>.
                             </li>
                         </ul>
                     </div>

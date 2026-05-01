@@ -21,7 +21,7 @@ const FEATURES = [
     { icon: "🎛️", title: "Custom parameters", body: "Pick how to sort: genre, year, mood, artist, popularity, language, or tempo." },
     { icon: "💾", title: "Save before you commit", body: "Review Gemini's suggestions, keep what you love, discard the rest." },
     { icon: "🚀", title: "One-click to Spotify", body: "Push any saved playlist back to your Spotify library when you're ready." },
-    { icon: "🔒", title: "Private by default", body: "Created playlists are private; we only read your library, nothing more." }
+    { icon: "🔒", title: "Private by default", body: "Created playlists are private. We read your library, profile, and top stats — nothing is stored on our servers." }
 ]
 
 const STEPS = [

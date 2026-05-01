@@ -5,29 +5,10 @@ services:
     build:
       context: ./be
       dockerfile: Dockerfile
-    image: resonance-ai-backend
+    image: lyra-backend
     ports:
       - "8080:8080"
     env_file:
       - ./be/.env
     restart: unless-stopped
-    networks:
-      - app-network
 
-  frontend:
-    build:
-      context: ./fe
-      dockerfile: Dockerfile
-    image: resonance-ai-frontend
-    ports:
-      - "80:80"
-    # Ensure backend starts before frontend
-    depends_on:
-      - backend
-    restart: unless-stopped
-    networks:
-      - app-network
-
-networks:
-  app-network:
-    driver: bridge
