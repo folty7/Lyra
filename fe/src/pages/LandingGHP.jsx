@@ -2,7 +2,7 @@ import lyraLogo from "@/assets/lyra-logo.png"
 import iphoneMockup from "@/assets/iphone-mockup-suggestions.png"
 import macbookMockup from "@/assets/Macbook-Mockup-dashboard.png"
 
-const LAUNCH_URL = "https://github.com/folty7/Resonance_AI"
+const LAUNCH_URL = "https://github.com/folty7/Lyra"
 
 function LyraLogo({ size = 36 }) {
     return (
