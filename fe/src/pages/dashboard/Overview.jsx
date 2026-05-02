@@ -257,23 +257,22 @@ export default function Overview() {
                 {/* Top Artist */}
                 <StatCard className="lg:col-span-4">
                     <p className="text-[11px] uppercase tracking-[0.15em] text-white/40 mb-3">Top Artist</p>
-                    <div className="flex items-center gap-4">
+                    <div className="relative aspect-square rounded-xl overflow-hidden mb-2.5 bg-gradient-to-br from-purple-500/20 to-green-500/10">
                         {topArtist?.image ? (
-                            <div className="w-20 h-20 rounded-full overflow-hidden bg-white/[0.04] shrink-0">
-                                <img src={topArtist.image} alt={topArtist.name} className="w-full h-full object-cover" />
-                            </div>
+                            <img src={topArtist.image} alt={topArtist?.name} className="w-full h-full object-cover" />
                         ) : (
-                            <div className="w-20 h-20 rounded-full bg-gradient-to-br from-purple-500/30 to-green-500/20 flex items-center justify-center shrink-0">
-                                <Users className="w-7 h-7 text-white/40" />
+                            <div className="w-full h-full flex items-center justify-center">
+                                <Users className="w-8 h-8 text-white/40" />
                             </div>
                         )}
-                        <div className="min-w-0">
-                            <p className="text-lg font-medium tracking-tight truncate">
-                                {topArtist?.name || (topLoaded ? '—' : 'Loading…')}
-                            </p>
-                            <p className="text-[11px] text-white/40 mt-0.5">your most-listened artist</p>
-                        </div>
+                        <span className="absolute top-1.5 left-1.5 px-1.5 py-0.5 rounded-md bg-black/60 backdrop-blur-sm text-[10px] font-medium text-white/90">
+                            #1
+                        </span>
                     </div>
+                    <p className="text-sm font-medium truncate">
+                        {topArtist?.name || (topLoaded ? '—' : 'Loading…')}
+                    </p>
+                    <p className="text-[11px] text-white/40 mt-0.5">your most-listened artist</p>
                 </StatCard>
             </section>
 

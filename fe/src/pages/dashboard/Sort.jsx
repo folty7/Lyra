@@ -77,7 +77,7 @@ export default function Sort() {
         if (tracks.length === 0) return setError("Your library hasn't loaded yet.")
         setIsSorting(true); setError(""); setGroups([])
         try {
-            const slice = tracks.slice(0, sampleSize)
+            const slice = tracks.slice(0, sampleSize).map(({ uri, name, artists, album, year }) => ({ uri, name, artists, album, year }))
             const res = await apiClient.post('/sort', {
                 tracks: slice,
                 parameters: Array.from(selectedParams),
