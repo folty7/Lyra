@@ -303,9 +303,6 @@ GEMINI_API_KEY=•••••`}
                             size="lg"
                             className="h-13 px-8 rounded-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-400 hover:to-green-500 border-0 text-white shadow-[0_8px_24px_rgba(34,197,94,0.4)] font-medium text-[15px] flex items-center gap-2.5"
                         >
-                            <svg viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5">
-                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.59 14.41c-.19.3-.58.39-.88.2-2.41-1.47-5.44-1.8-9.01-.99-.34.08-.68-.14-.76-.48-.08-.34.14-.68.48-.76 3.91-.89 7.27-.51 9.96 1.14.3.19.39.58.21.89z" />
-                            </svg>
                             Launch Lyra now
                         </Button>
                     </a>
