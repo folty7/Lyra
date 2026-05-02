@@ -2,13 +2,14 @@ import { useMemo, useState } from "react"
 import { Link } from "react-router-dom"
 import {
     ChevronRight, RefreshCw, Disc3, Sparkles, Upload, Trash2,
-    Music, Users, Calendar, AlertTriangle
+    Music, Users, Calendar, AlertTriangle, ListMusic
 } from "lucide-react"
 import { useTracksStore } from "@/store/useTracksStore"
 import { usePlaylistsStore, useStore } from "@/store/useStore"
 import { apiClient } from "@/api/axios"
 import { BarLineChart } from "@/components/dashboard/charts"
 import { useNavigate } from "react-router-dom"
+import PlaylistTracksModal from "@/components/PlaylistTracksModal"
 
 const ANALYTICS_TABS = ['Decades', 'Top Artists']
 
@@ -19,12 +20,14 @@ export default function Overview() {
         tracks, topArtists, topTracks, topLoaded, needsReauth,
         isLoading, isRefreshing, fetchTracks, lastFetchedAt
     } = useTracksStore()
-    const { savedPlaylists, removePlaylist, renamePlaylist } = usePlaylistsStore()
+    const { savedPlaylists, removePlaylist, renamePlaylist, removeTrackFromPlaylist } = usePlaylistsStore()
 
     const [analyticsTab, setAnalyticsTab] = useState('Top Artists')
     const [pushingIds, setPushingIds] = useState(new Set())
+    const [previewId, setPreviewId] = useState(null)
     const [toast, setToast] = useState("")
     const flashToast = (m) => { setToast(m); setTimeout(() => setToast(""), 3500) }
+    const previewing = savedPlaylists.find(p => p.id === previewId) || null
 
     const trackCount = tracks.length
 
@@ -254,19 +257,23 @@ export default function Overview() {
                 {/* Top Artist */}
                 <StatCard className="lg:col-span-4">
                     <p className="text-[11px] uppercase tracking-[0.15em] text-white/40 mb-3">Top Artist</p>
-                    {topArtist?.image ? (
-                        <div className="aspect-square rounded-2xl overflow-hidden bg-white/[0.04] mb-3">
-                            <img src={topArtist.image} alt={topArtist.name} className="w-full h-full object-cover" />
+                    <div className="flex items-center gap-4">
+                        {topArtist?.image ? (
+                            <div className="w-20 h-20 rounded-full overflow-hidden bg-white/[0.04] shrink-0">
+                                <img src={topArtist.image} alt={topArtist.name} className="w-full h-full object-cover" />
+                            </div>
+                        ) : (
+                            <div className="w-20 h-20 rounded-full bg-gradient-to-br from-purple-500/30 to-green-500/20 flex items-center justify-center shrink-0">
+                                <Users className="w-7 h-7 text-white/40" />
+                            </div>
+                        )}
+                        <div className="min-w-0">
+                            <p className="text-lg font-medium tracking-tight truncate">
+                                {topArtist?.name || (topLoaded ? '—' : 'Loading…')}
+                            </p>
+                            <p className="text-[11px] text-white/40 mt-0.5">your most-listened artist</p>
                         </div>
-                    ) : (
-                        <div className="aspect-square rounded-2xl bg-gradient-to-br from-purple-500/30 to-green-500/20 flex items-center justify-center mb-3">
-                            <Users className="w-10 h-10 text-white/40" />
-                        </div>
-                    )}
-                    <p className="text-lg font-medium tracking-tight truncate">
-                        {topArtist?.name || (topLoaded ? '—' : 'Loading…')}
-                    </p>
-                    <p className="text-[11px] text-white/40 mt-0.5">your most-listened artist</p>
+                    </div>
                 </StatCard>
             </section>
 
@@ -302,6 +309,14 @@ export default function Overview() {
                                             <p className="text-[11px] text-white/40 px-1">{p.uris.length} tracks</p>
                                         </div>
                                         <div className="flex items-center gap-1 opacity-60 group-hover:opacity-100 transition-opacity">
+                                            <button
+                                                onClick={() => setPreviewId(p.id)}
+                                                disabled={isPushing}
+                                                className="w-8 h-8 rounded-full hover:bg-white/[0.06] flex items-center justify-center"
+                                                title="View tracks"
+                                            >
+                                                <ListMusic className="w-3.5 h-3.5 text-white/60" />
+                                            </button>
                                             <button
                                                 onClick={() => pushToSpotify(p)}
                                                 disabled={isPushing}
@@ -342,6 +357,14 @@ export default function Overview() {
                     </div>
                 </Link>
             </section>
+
+            <PlaylistTracksModal
+                open={!!previewing}
+                onClose={() => setPreviewId(null)}
+                playlistName={previewing?.name || ''}
+                uris={previewing?.uris || []}
+                onRemoveTrack={(uri) => removeTrackFromPlaylist(previewing.id, uri)}
+            />
 
             {toast && (
                 <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 bg-black/80 border border-white/10 text-white text-sm px-5 py-3 rounded-full backdrop-blur-xl shadow-lg">

@@ -42,6 +42,12 @@ export const usePlaylistsStore = create(
                 savedPlaylists: state.savedPlaylists.map(p => p.id === id ? { ...p, name } : p)
             })),
 
+            removeTrackFromPlaylist: (id, uri) => set((state) => ({
+                savedPlaylists: state.savedPlaylists.map(p =>
+                    p.id === id ? { ...p, uris: p.uris.filter(u => u !== uri) } : p
+                )
+            })),
+
             clearPlaylists: () => set({ savedPlaylists: [] })
         }),
         { name: 'lyra-saved-playlists' }

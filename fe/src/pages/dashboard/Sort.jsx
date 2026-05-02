@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
-import { Sparkles, Plus, ChevronRight, Settings as SettingsIcon, Upload, Trash2 } from "lucide-react"
+import { Sparkles, Plus, ChevronRight, Settings as SettingsIcon, Upload, Trash2, ListMusic } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useTracksStore } from "@/store/useTracksStore"
 import { usePlaylistsStore } from "@/store/useStore"
 import { apiClient, getStoredGeminiKey } from "@/api/axios"
+import PlaylistTracksModal from "@/components/PlaylistTracksModal"
 
 const DEFAULT_PARAMS = ['genre', 'year']
 const PARAM_LABELS = {
@@ -19,7 +20,7 @@ const SAMPLE_SIZES = [50, 100, 200, 500]
 
 export default function Sort() {
     const { tracks } = useTracksStore()
-    const { savedPlaylists, addManyPlaylists, removePlaylist, renamePlaylist } = usePlaylistsStore()
+    const { savedPlaylists, addManyPlaylists, removePlaylist, renamePlaylist, removeTrackFromPlaylist } = usePlaylistsStore()
 
     const [availableParams, setAvailableParams] = useState([])
     const [selectedParams, setSelectedParams] = useState(new Set(DEFAULT_PARAMS))
@@ -29,9 +30,27 @@ export default function Sort() {
     const [isSorting, setIsSorting] = useState(false)
     const [error, setError] = useState("")
     const [pushingIds, setPushingIds] = useState(new Set())
+    const [preview, setPreview] = useState(null) // { kind: 'group'|'saved', key }
     const [toast, setToast] = useState("")
     const flashToast = (m) => { setToast(m); setTimeout(() => setToast(""), 3500) }
     const hasUserKey = !!getStoredGeminiKey()
+
+    const previewing = preview
+        ? (preview.kind === 'group'
+            ? groups[preview.key] && { name: groups[preview.key].name, uris: groups[preview.key].uris }
+            : savedPlaylists.find(p => p.id === preview.key))
+        : null
+
+    const handleRemoveTrack = (uri) => {
+        if (!preview) return
+        if (preview.kind === 'group') {
+            setGroups(prev => prev.map((g, i) =>
+                i === preview.key ? { ...g, uris: g.uris.filter(u => u !== uri) } : g
+            ))
+        } else {
+            removeTrackFromPlaylist(preview.key, uri)
+        }
+    }
 
     useEffect(() => {
         apiClient.get('/sort/parameters')
@@ -254,6 +273,13 @@ export default function Sort() {
                                         </div>
                                         <p className="text-[11px] text-white/50 mb-2.5 line-clamp-2">{g.description}</p>
                                         <div className="flex gap-2">
+                                            <button
+                                                onClick={() => setPreview({ kind: 'group', key: idx })}
+                                                className="h-8 px-3 rounded-full bg-white/[0.04] hover:bg-white/[0.08] text-white/70 text-xs font-medium flex items-center gap-1.5"
+                                                title="View tracks"
+                                            >
+                                                <ListMusic className="w-3.5 h-3.5" /> View
+                                            </button>
                                             <button onClick={() => keepGroup(idx)} className="flex-1 h-8 rounded-full bg-green-500/90 hover:bg-green-400 text-white text-xs font-medium">Keep</button>
                                             <button onClick={() => discardGroup(idx)} className="flex-1 h-8 rounded-full bg-white/[0.04] hover:bg-white/[0.08] text-white/70 text-xs font-medium">Discard</button>
                                         </div>
@@ -286,6 +312,14 @@ export default function Sort() {
                                                 <p className="text-[11px] text-white/40 px-1">{p.uris.length} tracks</p>
                                             </div>
                                             <button
+                                                onClick={() => setPreview({ kind: 'saved', key: p.id })}
+                                                disabled={isPushing}
+                                                className="w-8 h-8 rounded-full hover:bg-white/[0.06] flex items-center justify-center"
+                                                title="View tracks"
+                                            >
+                                                <ListMusic className="w-3.5 h-3.5 text-white/60" />
+                                            </button>
+                                            <button
                                                 onClick={() => pushToSpotify(p)}
                                                 disabled={isPushing}
                                                 className="w-8 h-8 rounded-full bg-emerald-500/20 hover:bg-emerald-500/30 disabled:opacity-50 flex items-center justify-center"
@@ -308,6 +342,14 @@ export default function Sort() {
                     )}
                 </div>
             </div>
+
+            <PlaylistTracksModal
+                open={!!previewing}
+                onClose={() => setPreview(null)}
+                playlistName={previewing?.name || ''}
+                uris={previewing?.uris || []}
+                onRemoveTrack={handleRemoveTrack}
+            />
 
             {toast && (
                 <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 bg-black/80 border border-white/10 text-white text-sm px-5 py-3 rounded-full backdrop-blur-xl shadow-lg">
