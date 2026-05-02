@@ -5,8 +5,10 @@ import lyraLogo from "@/assets/lyra-logo.png"
 import iphoneMockup from "@/assets/iphone-mockup-suggestions.png"
 import macbookMockup from "@/assets/Macbook-Mockup-dashboard.png"
 
-const backendUrl = import.meta.env.VITE_BACKEND_URL || (typeof window !== 'undefined' ? `http://${window.location.hostname}:8080` : '');
-const LAUNCH_URL = `${backendUrl}/auth/login`;
+// In production: relative URL → Vercel proxies to Railway. In dev: hit local backend directly.
+const LAUNCH_URL = import.meta.env.DEV
+    ? (typeof window !== 'undefined' ? `http://${window.location.hostname}:8080/auth/login` : '/auth/login')
+    : '/auth/login';
 
 function LyraLogo({ size = 36 }) {
     return (

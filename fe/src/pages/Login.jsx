@@ -74,7 +74,7 @@ export default function Login() {
                     <FeatureBullet>Keep what you like, push to Spotify in one click</FeatureBullet>
                 </ul>
 
-                <a href={`${import.meta.env.VITE_BACKEND_URL || `http://${window.location.hostname}:8080`}/auth/login`} className="w-full">
+                <a href={import.meta.env.DEV ? `http://${window.location.hostname}:8080/auth/login` : '/auth/login'} className="w-full">
                     <Button
                         size="lg"
                         className="w-full h-14 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 border border-blue-400/30 text-white shadow-[0_8px_24px_rgba(59,130,246,0.35)] transition-all duration-300 font-medium tracking-wide text-[15px] flex items-center justify-center gap-2.5"
