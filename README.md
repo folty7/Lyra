@@ -8,7 +8,7 @@ AI-powered playlist organiser that sorts your Spotify library into smart, themed
 
 ## Features
 
-- Fetches your 100 most recently saved Spotify tracks automatically
+- Fetches your most recently saved Spotify tracks automatically
 - Uses Google Gemini AI to group them into coherent, named playlists
 - Sort by genre, year, mood, artist, popularity, language, or tempo
 - Review and rename AI suggestions before committing
