@@ -143,7 +143,7 @@ export default function DashboardLayout() {
                             </a>
                             <div className="flex items-center gap-3 px-1 pr-4 h-11 rounded-full bg-white/[0.04] border border-white/[0.06]">
                                 {user?.images?.[0]?.url ? (
-                                    <img src={user.images[0].url} alt="Profile" className="w-9 h-9 rounded-full object-cover" />
+                                    <img src={user.images[0].url} alt="Profile" loading="lazy" decoding="async" className="w-9 h-9 rounded-full object-cover bg-white/[0.06]" />
                                 ) : (
                                     <div className="w-9 h-9 rounded-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center text-sm font-semibold text-white">
                                         {user?.display_name ? user.display_name.charAt(0).toUpperCase() : 'L'}
