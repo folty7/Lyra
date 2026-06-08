@@ -197,7 +197,7 @@ export default function Overview() {
                                 <div key={t.id || i} className="flex items-center gap-3 p-1.5 rounded-xl hover:bg-white/[0.04]">
                                     <span className="text-[11px] text-white/30 w-4 text-right tabular-nums">{i + 1}</span>
                                     {t.albumImage ? (
-                                        <img src={t.albumImage} alt="" className="w-9 h-9 rounded-md object-cover flex-shrink-0" />
+                                        <img src={t.albumImage} alt="" loading="lazy" decoding="async" className="w-9 h-9 rounded-md object-cover flex-shrink-0 bg-white/[0.06]" />
                                     ) : (
                                         <div className="w-9 h-9 rounded-md bg-white/[0.06] flex-shrink-0" />
                                     )}
@@ -259,7 +259,7 @@ export default function Overview() {
                     <p className="text-[11px] uppercase tracking-[0.15em] text-white/40 mb-3">Top Artist</p>
                     <div className="relative aspect-square rounded-xl overflow-hidden mb-2.5 bg-gradient-to-br from-purple-500/20 to-green-500/10">
                         {topArtist?.image ? (
-                            <img src={topArtist.image} alt={topArtist?.name} className="w-full h-full object-cover" />
+                            <img src={topArtist.image} alt={topArtist?.name} loading="lazy" decoding="async" className="w-full h-full object-cover" />
                         ) : (
                             <div className="w-full h-full flex items-center justify-center">
                                 <Users className="w-8 h-8 text-white/40" />

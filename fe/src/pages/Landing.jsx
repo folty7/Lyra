@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button"
 import { Link } from "react-router-dom"
 import ContactForm from "@/components/ContactForm"
+import LazyImage from "@/components/LazyImage"
 import lyraLogo from "@/assets/lyra-logo.png"
 import iphoneMockup from "@/assets/iphone-mockup-suggestions.png"
 import macbookMockup from "@/assets/Macbook-Mockup-dashboard.png"
@@ -111,7 +112,14 @@ export default function Landing() {
 
                     <div className="flex items-center justify-center relative">
                         <div className="absolute inset-0 bg-green-500/20 blur-[120px] rounded-full" />
-                        <img src={macbookMockup} alt="Macbook App Dashboard" className="relative z-10 w-full max-w-2xl mx-auto drop-shadow-2xl hover:scale-[1.02] transition-transform duration-500" />
+                        <LazyImage
+                            src={macbookMockup}
+                            alt="Macbook App Dashboard"
+                            eager
+                            wrapperClassName="relative z-10 w-full max-w-2xl mx-auto aspect-[3/2]"
+                            skeletonClassName="rounded-xl"
+                            className="w-full h-full object-contain drop-shadow-2xl hover:scale-[1.02] transition-transform duration-500"
+                        />
                     </div>
                 </div>
             </section>
@@ -147,13 +155,25 @@ export default function Landing() {
 
                 <div className="mb-20 relative">
                     <div className="absolute inset-0 bg-green-500/10 blur-[100px] rounded-full" />
-                    <img src={macbookMockup} alt="Macbook App Dashboard Showcase" className="relative z-10 w-full max-w-5xl mx-auto drop-shadow-2xl" />
+                    <LazyImage
+                        src={macbookMockup}
+                        alt="Macbook App Dashboard Showcase"
+                        wrapperClassName="relative z-10 w-full max-w-5xl mx-auto aspect-[3/2]"
+                        skeletonClassName="rounded-xl"
+                        className="w-full h-full object-contain drop-shadow-2xl"
+                    />
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-12 items-center">
                     <div className="relative flex justify-center">
                         <div className="absolute inset-0 bg-green-500/20 blur-[80px] rounded-full" />
-                        <img src={iphoneMockup} alt="iPhone App Suggestions Showcase" className="relative z-10 w-[350px] md:w-[500px] drop-shadow-2xl hover:-translate-y-2 transition-transform duration-500" />
+                        <LazyImage
+                            src={iphoneMockup}
+                            alt="iPhone App Suggestions Showcase"
+                            wrapperClassName="relative z-10 w-[350px] md:w-[500px] aspect-square"
+                            skeletonClassName="rounded-2xl"
+                            className="w-full h-full object-contain drop-shadow-2xl hover:-translate-y-2 transition-transform duration-500"
+                        />
                     </div>
                     <div className="space-y-4 max-w-md">
                         <h3 className="text-3xl font-semibold text-white tracking-tight">
