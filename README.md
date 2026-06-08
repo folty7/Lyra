@@ -2,7 +2,7 @@
 
 AI-powered playlist organiser that sorts your Spotify library into smart, themed playlists using Google Gemini.
 
-**[Live landing page](https://folty7.github.io/Lyra)** · [Privacy Policy](#) · [Terms of Use](#)
+**[Live landing page](https://lyra-fe-production.up.railway.app/)** · [Privacy Policy](#) · [Terms of Use](#)
 
 ---
 
@@ -26,7 +26,7 @@ AI-powered playlist organiser that sorts your Spotify library into smart, themed
 | Backend | Node.js, Express 5 |
 | Auth | Spotify OAuth 2.0 (httpOnly cookies) |
 | AI | Google Gemini API (`@google/genai`) |
-| Deployment | Vercel (frontend) + Railway (backend) |
+| Deployment | Railway (frontend + backend) |
 | GH Pages | Static landing page via separate Vite build |
 
 ---
@@ -46,7 +46,7 @@ Lyra/
 │   ├── server.js              # Entry point, CORS, auth routes
 │   ├── Dockerfile
 │   └── .env.example
-├── fe/                        # React frontend (deployed to Vercel)
+├── fe/                        # React frontend (deployed to Railway)
 │   ├── src/
 │   │   ├── api/axios.js       # Axios instance (withCredentials)
 │   │   ├── components/        # Shared UI components
@@ -118,7 +118,7 @@ Open the app, click **Launch app** — you'll be redirected through Spotify OAut
 
 ## Docker (backend only)
 
-The backend ships with a `Dockerfile` for local testing or self-hosting. The frontend is deployed to Vercel and does not have a Docker setup.
+The backend ships with a `Dockerfile` for local testing or self-hosting. The frontend is deployed to Railway and does not have a Docker setup.
 
 ```bash
 # From the project root
@@ -180,11 +180,14 @@ Bulk:
 3. Generate a public domain
 4. Add environment variables (same as `.env.example`, with production URLs)
 
-### Frontend → Vercel
+### Frontend → Railway
 
-1. New project → import repo → set **Root directory** to `fe`
-2. Build: `npm run build` · Output: `dist`
-3. Add env var: `VITE_BACKEND_URL=https://your-railway-domain.up.railway.app`
+1. Add a new service in the same project → Deploy from GitHub → set **Root directory** to `fe`
+2. Build: `npm install && npm run build` · Start: `npx serve -s dist -l $PORT`
+3. Generate a public domain
+4. Add env var: `VITE_BACKEND_URL=https://your-backend-railway-domain.up.railway.app`
+
+> Both services live in the same Railway project, each with its own public domain. Since frontend and backend share the same platform, no cross-origin (CORS) juggling between separate providers is needed — just make sure the backend's `FRONTEND_URI` / allowed origins match the frontend's Railway domain.
 
 ### GitHub Pages (landing only)
 
