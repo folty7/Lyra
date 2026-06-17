@@ -60,6 +60,10 @@ const stateKey = 'spotify_auth_state';
 // --- Routes ---
 
 app.get('/auth/login', (req, res) => {
+    // Never cache the auth redirect — a cached 302 returns 304 with no Location header,
+    // so the browser stops redirecting to Spotify.
+    res.set('Cache-Control', 'no-store, no-cache, must-revalidate');
+
     const state = generateRandomString(16);
     res.cookie(stateKey, state);
 
