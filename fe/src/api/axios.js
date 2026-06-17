@@ -14,11 +14,11 @@ export const setStoredGeminiKey = (key) => {
     } catch { /* ignore */ }
 };
 
-// In production we use relative `/api` so Vercel proxies to Railway (same-origin → Safari ITP friendly).
 // In dev we hit the local backend directly on port 8080.
+// In production we use the backend's public URL from VITE_API_URL.
 const apiBase = import.meta.env.DEV
     ? `http://${window.location.hostname}:8080/api`
-    : '/api';
+    : `${import.meta.env.VITE_API_URL ?? ''}/api`;
 
 export const apiClient = axios.create({
     baseURL: apiBase,
