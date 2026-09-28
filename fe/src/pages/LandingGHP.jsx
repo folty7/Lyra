@@ -15,9 +15,9 @@ function LyraLogo({ size = 36 }) {
 
 
 const FEATURES = [
-    { icon: "🎧", title: "Your full library", body: "Pulls the 100 newest saved tracks from your Spotify account automatically." },
+    { icon: "🎧", title: "Your full library", body: "Pulls up to 1,000 of your newest saved tracks from Spotify automatically." },
     { icon: "🤖", title: "Gemini-powered sorting", body: "Google's Gemini AI groups your tracks into coherent, named playlists." },
-    { icon: "🎛️", title: "Custom parameters", body: "Pick how to sort: genre, year, mood, artist, popularity, language, or tempo." },
+    { icon: "🎛️", title: "Custom parameters", body: "Pick how to sort: genre, year, mood, artist, album, or activity — up to two at a time." },
     { icon: "💾", title: "Save before you commit", body: "Review Gemini's suggestions, keep what you love, discard the rest." },
     { icon: "🚀", title: "One-click to Spotify", body: "Push any saved playlist back to your Spotify library when you're ready." },
     { icon: "🔒", title: "Private by default", body: "Created playlists are private. We read your library, profile, and top stats — nothing is stored on our servers." }
@@ -79,8 +79,8 @@ export default function LandingGHP() {
                             </span>
                         </h1>
                         <p className="text-[17px] text-white/60 leading-relaxed mb-10 max-w-lg">
-                            Lyra reads your 100 newest saved Spotify tracks and uses Google Gemini to
-                            group them into smart playlists — by genre, year, mood, or whatever you choose.
+                            Lyra reads up to 1,000 of your newest saved Spotify tracks and uses Google Gemini
+                            to group them into smart playlists — by genre, year, mood, or whatever you choose.
                         </p>
                         <div className="flex flex-wrap gap-3">
                             <a href={LAUNCH_URL} target="_blank" rel="noreferrer">
@@ -326,8 +326,8 @@ GEMINI_API_KEY=•••••`}
                     <div className="px-6 pb-8 pt-2 space-y-4 border-t border-white/[0.05]">
                         <p className="text-white/40 text-[11px] pt-4">Last updated: April 27, 2026</p>
                         {[
-                            { t: "Data we collect", b: "Lyra accesses your display name, profile picture, account email, country, 100 most recently saved tracks (title, artist, album, duration, popularity, release year), and your top tracks and artists for dashboard statistics. None of this is stored on our servers — it is read once per session and discarded when your session ends. We do not collect payment information or listening history beyond the above." },
-                            { t: "How we use it", b: "Your saved tracks are sent to Google Gemini AI to generate playlist suggestions. Your access token is stored in a secure, HTTP-only cookie for the duration of your session only. Suggested playlists you save are stored in your browser's local storage and never leave your device unless you push them to Spotify. No Spotify data is retained on any server between sessions." },
+                            { t: "Data we collect", b: "Lyra accesses your display name, profile picture, account email, country, up to 1,000 of your most recently saved tracks (title, artist, album, duration, popularity, release year), and your top tracks and artists for dashboard statistics. None of this is stored on our servers — it is read once per session and discarded when your session ends. We do not collect payment information or listening history beyond the above." },
+                            { t: "How we use it", b: "The tracks you choose for a sort (50, 100, 200, or 500 of your newest saved tracks per run) are sent to Google Gemini AI to generate playlist suggestions. Your access token is stored in a secure, HTTP-only cookie for the duration of your session only. Suggested playlists you save are stored in your browser's local storage and never leave your device unless you push them to Spotify. No Spotify data is retained on any server between sessions." },
                             { t: "Third-party services", b: "Lyra uses Spotify OAuth 2.0 (user-library-read, user-top-read, playlist-modify-private scopes) and Google Gemini AI. Only track metadata — no personally identifying information — is sent to Gemini. Google's privacy policy applies to that processing." },
                             { t: "Your rights", b: "To revoke access, visit spotify.com/account/apps and remove Lyra. Because Lyra stores no personal data server-side, there is nothing for us to delete or export on your behalf." },
                             { t: "Security", b: "Access tokens are stored in HTTP-only cookies, never accessible via JavaScript, and transmitted over HTTPS only. Any Gemini API key you provide is stored only in your browser's local storage." },

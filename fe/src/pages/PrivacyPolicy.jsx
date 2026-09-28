@@ -58,7 +58,7 @@ export default function PrivacyPolicy() {
                         <p className={pClass}>Lyra accesses the following data from your Spotify account via the official Spotify Web API:</p>
                         <ul className="list-disc list-inside space-y-1 ml-2 mb-3">
                             <li className={liClass}>Your display name, profile picture, country, and account email — shown in the dashboard header.</li>
-                            <li className={liClass}>Your 100 most recently saved tracks (title, artist, album, duration, popularity, release year).</li>
+                            <li className={liClass}>Up to 1,000 of your most recently saved tracks (title, artist, album, duration, popularity, release year).</li>
                             <li className={liClass}>Your top tracks and top artists (used for overview statistics).</li>
                         </ul>
                         <p className={pClass}>
@@ -75,7 +75,7 @@ export default function PrivacyPolicy() {
                     <div className={sectionClass}>
                         <h2 className={h2Class}>2. How we use your data</h2>
                         <ul className="list-disc list-inside space-y-1 ml-2">
-                            <li className={liClass}>Your saved tracks are sent to Google Gemini AI to generate playlist suggestions.</li>
+                            <li className={liClass}>The tracks you select for a sort — 50, 100, 200, or 500 of your newest saved tracks per run — are sent to Google Gemini AI to generate playlist suggestions.</li>
                             <li className={liClass}>Your access token is stored in a secure, HTTP-only cookie for the duration of your session only.</li>
                             <li className={liClass}>Suggested playlists you choose to save are stored in your browser's local storage — they never leave your device unless you explicitly push them to Spotify.</li>
                             <li className={liClass}>We do not store your Spotify data on any server between sessions.</li>

@@ -20,9 +20,9 @@ function LyraLogo({ size = 36 }) {
 
 
 const FEATURES = [
-    { icon: "🎧", title: "Your full library", body: "Pulls the 100 newest saved tracks from your Spotify account automatically." },
+    { icon: "🎧", title: "Your full library", body: "Pulls up to 1,000 of your newest saved tracks from Spotify automatically." },
     { icon: "🤖", title: "Gemini-powered sorting", body: "Google's Gemini AI groups your tracks into coherent, named playlists." },
-    { icon: "🎛️", title: "Custom parameters", body: "Pick how to sort: genre, year, mood, artist, popularity, language, or tempo." },
+    { icon: "🎛️", title: "Custom parameters", body: "Pick how to sort: genre, year, mood, artist, album, or activity — up to two at a time." },
     { icon: "💾", title: "Save before you commit", body: "Review Gemini's suggestions, keep what you love, discard the rest." },
     { icon: "🚀", title: "One-click to Spotify", body: "Push any saved playlist back to your Spotify library when you're ready." },
     { icon: "🔒", title: "Private by default", body: "Created playlists are private. We read your library, profile, and top stats — nothing is stored on our servers." }
@@ -87,8 +87,8 @@ export default function Landing() {
                         </h1>
 
                         <p className="text-[17px] text-white/60 leading-relaxed mb-10 max-w-lg">
-                            Lyra reads your 100 newest saved Spotify tracks and uses Google Gemini to
-                            group them into smart playlists — by genre, year, mood, or whatever you choose.
+                            Lyra reads up to 1,000 of your newest saved Spotify tracks and uses Google Gemini
+                            to group them into smart playlists — by genre, year, mood, or whatever you choose.
                         </p>
 
                         <div className="flex flex-wrap gap-3">

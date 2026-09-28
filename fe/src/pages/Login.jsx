@@ -70,7 +70,7 @@ export default function Login() {
                 </div>
 
                 <ul className="w-full space-y-2 mb-8 text-left px-2">
-                    <FeatureBullet>100 newest saved tracks, auto-enriched with genre metadata</FeatureBullet>
+                    <FeatureBullet>Up to 1,000 of your newest saved tracks, loaded automatically</FeatureBullet>
                     <FeatureBullet>Gemini groups them by genre, year, mood, and more</FeatureBullet>
                     <FeatureBullet>Keep what you like, push to Spotify in one click</FeatureBullet>
                 </ul>

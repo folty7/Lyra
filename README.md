@@ -8,9 +8,9 @@ AI-powered playlist organiser that sorts your Spotify library into smart, themed
 
 ## Features
 
-- Fetches your most recently saved Spotify tracks automatically
+- Fetches up to 1,000 of your most recently saved Spotify tracks automatically
 - Uses Google Gemini AI to group them into coherent, named playlists
-- Sort by genre, year, mood, artist, popularity, language, or tempo
+- Sort by genre, year, mood, artist, album, or activity (up to two parameters per run)
 - Review and rename AI suggestions before committing
 - Push playlists directly to your Spotify library in one click
 - Bring your own Gemini API key (self-hosted mode)
@@ -99,7 +99,7 @@ SPOTIFY_CLIENT_SECRET=your_spotify_client_secret
 SPOTIFY_REDIRECT_URI=http://127.0.0.1:8080/auth/callback
 
 GEMINI_API_KEY=your_gemini_api_key
-GEMINI_MODEL=gemini-2.0-flash
+GEMINI_MODEL=gemini-2.5-flash-lite
 ```
 
 ### 3. Frontend
@@ -139,7 +139,7 @@ All `/api/*` routes require a valid session cookie (`access_token`). The auth mi
 | `GET` | `/auth/callback` | Handles OAuth callback, sets cookies |
 | `GET` | `/auth/logout` | Clears session cookies |
 | `GET` | `/api/me` | Current Spotify user profile |
-| `GET` | `/api/tracks` | Saved tracks (`?limit=100`) |
+| `GET` | `/api/tracks` | Saved tracks (`?limit=1000` by default, capped at 5000) |
 | `GET` | `/api/top` | Top tracks, artists, and genres |
 | `GET` | `/api/sort/parameters` | Available sort parameters |
 | `POST` | `/api/sort` | Group tracks via Gemini AI |
@@ -156,6 +156,12 @@ All `/api/*` routes require a valid session cookie (`access_token`). The auth mi
 ```
 
 Pass `x-gemini-api-key` header to use your own Gemini key instead of the server's.
+
+The UI sends 50, 100, 200, or 500 tracks per run (500 is the maximum). The endpoint
+itself does not cap `tracks`, but the model's output limit does: every track URI has
+to be echoed back, which costs roughly 13–18 output tokens each. `gemini-2.5-flash-lite`
+(65,536 output tokens) leaves plenty of headroom at 500 tracks; `gemini-2.0-flash` caps
+output at 8,192 tokens, which truncates the JSON at roughly 450–600 tracks.
 
 ### `POST /api/playlists`
 
