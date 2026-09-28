@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button"
 import { Link } from "react-router-dom"
 import ContactForm from "@/components/ContactForm"
+import DemoAccessNotice from "@/components/DemoAccessNotice"
 import LazyImage from "@/components/LazyImage"
 import lyraLogo from "@/assets/lyra-logo.png"
 import iphoneMockup from "@/assets/iphone-mockup-suggestions.png"
@@ -63,8 +64,14 @@ export default function Landing() {
                 </a>
             </header>
 
+            {/* Invite-only notice — must sit above the fold: "Launch app" goes
+                straight to Spotify OAuth, so the login page is never seen. */}
+            <div className="relative z-20 w-full max-w-7xl mx-auto px-6 sm:px-10 pt-2">
+                <DemoAccessNotice />
+            </div>
+
             {/* Hero */}
-            <section className="relative z-10 w-full max-w-7xl mx-auto px-6 sm:px-10 pt-12 sm:pt-20 pb-24">
+            <section className="relative z-10 w-full max-w-7xl mx-auto px-6 sm:px-10 pt-10 sm:pt-14 pb-24">
                 <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
                     <div className="flex flex-col">
                         <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.04] border border-white/[0.08] text-[11px] text-white/60 w-fit mb-6 backdrop-blur-md">

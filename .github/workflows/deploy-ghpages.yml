@@ -5,6 +5,8 @@ on:
     branches: [main]
     paths:
       - 'fe/src/pages/LandingGHP.jsx'
+      - 'fe/src/components/**'
+      - 'fe/src/lib/**'
       - 'fe/src/ghp-main.jsx'
       - 'fe/src/index.css'
       - 'fe/src/assets/**'
