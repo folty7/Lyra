@@ -59,8 +59,8 @@ router.post('/sort', async (req, res) => {
             return res.status(400).json({ error: 'parameters must be a non-empty array (e.g. ["genre", "year"])' });
         }
 
-        const groups = await geminiService.groupTracksByParameters(tracks, parameters, extra, userApiKey);
-        res.json({ success: true, groups });
+        const { groups, coverage } = await geminiService.groupTracksByParameters(tracks, parameters, extra, userApiKey);
+        res.json({ success: true, groups, coverage });
     } catch (error) {
         console.error('Sort error:', error);
         res.status(500).json({ error: error.message || 'Failed to sort tracks' });

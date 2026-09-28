@@ -16,7 +16,8 @@ const PARAM_LABELS = {
     mood: 'Mood',
     activity: 'Activity'
 }
-const SAMPLE_SIZES = [50, 100, 200, 500]
+// Caps out at 1000 because that is what /api/tracks loads into the store.
+const SAMPLE_SIZES = [50, 100, 200, 500, 1000]
 
 export default function Sort() {
     const { tracks } = useTracksStore()
@@ -27,6 +28,7 @@ export default function Sort() {
     const [extra, setExtra] = useState("")
     const [sampleSize, setSampleSize] = useState(100)
     const [groups, setGroups] = useState([])
+    const [coverage, setCoverage] = useState(null) // { requested, assigned }
     const [isSorting, setIsSorting] = useState(false)
     const [error, setError] = useState("")
     const [pushingIds, setPushingIds] = useState(new Set())
@@ -75,7 +77,7 @@ export default function Sort() {
     const handleSort = async () => {
         if (selectedParams.size === 0) return setError("Pick at least one parameter.")
         if (tracks.length === 0) return setError("Your library hasn't loaded yet.")
-        setIsSorting(true); setError(""); setGroups([])
+        setIsSorting(true); setError(""); setGroups([]); setCoverage(null)
         try {
             const slice = tracks.slice(0, sampleSize).map(({ uri, name, artists, album, year }) => ({ uri, name, artists, album, year }))
             const res = await apiClient.post('/sort', {
@@ -83,7 +85,10 @@ export default function Sort() {
                 parameters: Array.from(selectedParams),
                 extra: extra.trim() || undefined
             })
-            if (res.data.success) setGroups(res.data.groups || [])
+            if (res.data.success) {
+                setGroups(res.data.groups || [])
+                setCoverage(res.data.coverage || null)
+            }
         } catch (err) {
             if (err.response?.data?.error === 'QUOTA_EXCEEDED') {
                 setError('QUOTA_EXCEEDED')
@@ -186,7 +191,9 @@ export default function Sort() {
                             ))}
                         </div>
                         <p className="text-[11px] text-white/40 mb-5">
-                            How many of your most recent saved tracks to send to Gemini. Larger = richer playlists, slower &amp; more cost.
+                            How many of your most recent saved tracks to send to Gemini — 1000 is your whole
+                            loaded library. Larger = richer playlists, slower &amp; more cost, and the AI is
+                            likelier to leave some tracks out.
                         </p>
 
                         <p className="text-[11px] uppercase tracking-[0.15em] text-white/40 mb-2">Extra hint (optional)</p>
@@ -256,6 +263,13 @@ export default function Sort() {
                                 </div>
                             )}
                         </div>
+
+                        {coverage && coverage.assigned < coverage.requested && (
+                            <p className="mb-3 rounded-xl border border-amber-400/25 bg-amber-400/[0.08] px-3 py-2 text-[11px] leading-relaxed text-amber-100/80">
+                                Gemini placed {coverage.assigned.toLocaleString()} of {coverage.requested.toLocaleString()} tracks.
+                                The remaining {(coverage.requested - coverage.assigned).toLocaleString()} were left out — try a smaller sample size for full coverage.
+                            </p>
+                        )}
 
                         {groups.length === 0 ? (
                             <div className="flex-1 flex flex-col items-center justify-center text-center py-10 text-white/40">

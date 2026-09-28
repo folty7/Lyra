@@ -55,10 +55,14 @@ const groupTracksByParameters = async (tracks, parameters, extra = '', apiKey = 
         year: t.year
     }));
 
+    // Scale the playlist count with the batch size — a fixed 3-6 would turn a
+    // 1000-track sort into a handful of 200-track dumps.
+    const targetGroups = Math.min(Math.max(Math.round(trackSummaries.length / 25), 3), 20);
+
     const prompt = `You are a music curator. Group the following Spotify tracks into playlists using these parameters:\n${paramSpec}\n${extra ? `\nAdditional instructions: ${extra}\n` : ''}
 Rules:
 - Every track URI must appear in exactly one group.
-- Aim for 3-6 well-balanced groups; each with at least 2 tracks when possible.
+- Aim for about ${targetGroups} well-balanced groups (roughly ${Math.max(Math.round(trackSummaries.length / targetGroups), 2)} tracks each); each with at least 2 tracks when possible.
 - Name each playlist concisely (max 40 chars) and write a one-sentence description.
 - Base names on the parameters actually used (e.g. "90s Rock", "Chill Indie 2020s", "Workout Hype").
 - The input only contains: name, artists, album, year. For any selected parameter not directly present (genre, mood, activity), use your training knowledge of the artist and track to infer it. Do not refuse or skip a track because metadata is missing.
@@ -113,14 +117,29 @@ ${JSON.stringify(trackSummaries, null, 2)}`;
         throw new Error('AI response could not be parsed');
     }
 
+    // The model has to echo every URI back verbatim, and at larger batch sizes it
+    // does drop or mangle some. Keep only URIs we actually sent, keep each one in
+    // the first group that claims it, and report how many made it so the caller
+    // can tell the user instead of silently returning a short playlist set.
     const validUris = new Set(tracks.map(t => t.uri));
-    return (parsed.groups || [])
+    const seen = new Set();
+
+    const groups = (parsed.groups || [])
         .map(g => ({
             name: String(g.name || 'Untitled').slice(0, 100),
             description: String(g.description || '').slice(0, 280),
-            uris: (g.uris || []).filter(uri => validUris.has(uri))
+            uris: (g.uris || []).filter(uri => {
+                if (!validUris.has(uri) || seen.has(uri)) return false;
+                seen.add(uri);
+                return true;
+            })
         }))
         .filter(g => g.uris.length > 0);
+
+    return {
+        groups,
+        coverage: { requested: validUris.size, assigned: seen.size }
+    };
 };
 
 module.exports = {
