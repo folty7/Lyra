@@ -1,5 +1,72 @@
+import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Link } from "react-router-dom"
+import { WEB3FORMS_KEY } from "@/components/ContactForm"
+
+function DemoAccessNotice() {
+    const [email, setEmail] = useState("")
+    const [status, setStatus] = useState("idle") // idle | submitting | success | error
+
+    const handleSubmit = async (e) => {
+        e.preventDefault()
+        setStatus("submitting")
+        try {
+            const res = await fetch("https://api.web3forms.com/submit", {
+                method: "POST",
+                headers: { "Content-Type": "application/json", Accept: "application/json" },
+                body: JSON.stringify({
+                    access_key: WEB3FORMS_KEY,
+                    subject: "Lyra — demo access request",
+                    from_name: "Lyra login page",
+                    email,
+                    message: `Please add ${email} to the Spotify app's allowed users.`,
+                    botcheck: "",
+                }),
+            })
+            const data = await res.json()
+            setStatus(data.success ? "success" : "error")
+        } catch {
+            setStatus("error")
+        }
+    }
+
+    return (
+        <div className="w-full mb-6 rounded-2xl border border-amber-300/20 bg-amber-400/[0.06] p-4 text-left">
+            <p className="text-[13px] font-medium text-amber-200">Invite-only demo</p>
+            <p className="mt-1 text-[12px] leading-relaxed text-white/60">
+                Lyra runs in Spotify's Development mode, so only approved accounts can sign in. Send me the email
+                of your Spotify account and I'll add you to the demo.
+            </p>
+
+            {status === "success" ? (
+                <p className="mt-3 text-[12px] text-green-300">
+                    Request sent! You'll be able to connect once I've approved your account.
+                </p>
+            ) : (
+                <form onSubmit={handleSubmit} className="mt-3 flex gap-2">
+                    <input
+                        type="email"
+                        required
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        placeholder="Spotify account email"
+                        className="min-w-0 flex-1 h-9 rounded-full border border-white/[0.1] bg-white/[0.04] px-3.5 text-[13px] text-white placeholder-white/30 focus:outline-none focus:border-amber-300/40"
+                    />
+                    <button
+                        type="submit"
+                        disabled={status === "submitting"}
+                        className="h-9 shrink-0 rounded-full border border-amber-300/30 bg-amber-400/15 px-4 text-[12px] font-medium text-amber-100 hover:bg-amber-400/25 transition-colors disabled:opacity-50"
+                    >
+                        {status === "submitting" ? "Sending…" : "Request access"}
+                    </button>
+                </form>
+            )}
+            {status === "error" && (
+                <p className="mt-2 text-[11px] text-red-300">Something went wrong. Please try again.</p>
+            )}
+        </div>
+    )
+}
 
 function LyraLogo() {
     return (
@@ -68,11 +135,13 @@ export default function Login() {
                     </p>
                 </div>
 
-                <ul className="w-full space-y-2 mb-10 text-left px-2">
+                <ul className="w-full space-y-2 mb-8 text-left px-2">
                     <FeatureBullet>100 newest saved tracks, auto-enriched with genre metadata</FeatureBullet>
                     <FeatureBullet>Gemini groups them by genre, year, mood, and more</FeatureBullet>
                     <FeatureBullet>Keep what you like, push to Spotify in one click</FeatureBullet>
                 </ul>
+
+                <DemoAccessNotice />
 
                 <a href={import.meta.env.DEV ? `http://${window.location.hostname}:8080/auth/login` : `${import.meta.env.VITE_API_URL ?? ''}/auth/login`} className="w-full">
                     <Button

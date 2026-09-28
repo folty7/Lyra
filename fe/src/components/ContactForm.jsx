@@ -1,6 +1,6 @@
 import { useState } from "react"
 
-const WEB3FORMS_KEY = "b3e2dd8e-b39a-4f65-b0c3-9c4d7571ffa7"
+export const WEB3FORMS_KEY = "b3e2dd8e-b39a-4f65-b0c3-9c4d7571ffa7"
 
 const inputClass = "h-11 bg-white/[0.04] border border-white/[0.08] rounded-full px-4 text-white placeholder-white/30 focus:outline-none focus:border-green-500/40 focus:ring-1 focus:ring-green-500/30 text-[14px]"
 const cardClass = "rounded-2xl bg-gradient-to-b from-white/[0.05] to-white/[0.02] border border-white/[0.07] hover:border-green-400/30 transition-colors"
