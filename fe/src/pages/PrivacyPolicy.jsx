@@ -67,7 +67,7 @@ export default function PrivacyPolicy() {
                             We do not collect payment information or listening history beyond what is listed above.
                         </p>
                         <p className={pClass}>
-                            If you use the contact form on this site, your name and email address are processed by Web3Forms
+                            If you use the contact form on this site, your name and email address are processed by Formspree
                             (see section 3) solely to deliver your message to us.
                         </p>
                     </div>
@@ -103,10 +103,10 @@ export default function PrivacyPolicy() {
                                 {" "}<a href="https://policies.google.com/privacy" target="_blank" rel="noreferrer" className="text-green-300 hover:underline">policies.google.com/privacy</a>.
                             </li>
                             <li className={liClass}>
-                                <strong className="text-white/80">Web3Forms</strong> — if you submit the contact form, your name and email address
-                                are transmitted to Web3Forms solely to deliver your message to us. They are not stored by us.
-                                Web3Forms' privacy policy applies:{" "}
-                                <a href="https://web3forms.com/privacy" target="_blank" rel="noreferrer" className="text-green-300 hover:underline">web3forms.com/privacy</a>.
+                                <strong className="text-white/80">Formspree</strong> — if you submit the contact form, your name and email address
+                                are transmitted to Formspree solely to deliver your message to us. They are not stored by us.
+                                Formspree's privacy policy applies:{" "}
+                                <a href="https://formspree.io/legal/privacy-policy/" target="_blank" rel="noreferrer" className="text-green-300 hover:underline">formspree.io/legal/privacy-policy</a>.
                             </li>
                         </ul>
                     </div>

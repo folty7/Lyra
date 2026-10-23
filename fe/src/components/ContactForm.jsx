@@ -1,6 +1,7 @@
 import { useState } from "react"
 
-export const WEB3FORMS_KEY = "b3e2dd8e-b39a-4f65-b0c3-9c4d7571ffa7"
+// Formspree, not Web3Forms: Web3Forms blocks submissions from *.up.railway.app
+export const FORMSPREE_ENDPOINT = "https://formspree.io/f/myeeyavk"
 
 const inputClass = "h-11 bg-white/[0.04] border border-white/[0.08] rounded-full px-4 text-white placeholder-white/30 focus:outline-none focus:border-green-500/40 focus:ring-1 focus:ring-green-500/30 text-[14px]"
 const cardClass = "rounded-2xl bg-gradient-to-b from-white/[0.05] to-white/[0.02] border border-white/[0.07] hover:border-green-400/30 transition-colors"
@@ -15,19 +16,15 @@ export default function ContactForm() {
         e.preventDefault()
         setStatus("submitting")
         try {
-            const res = await fetch("https://api.web3forms.com/submit", {
+            const res = await fetch(FORMSPREE_ENDPOINT, {
                 method: "POST",
                 headers: { "Content-Type": "application/json", Accept: "application/json" },
                 body: JSON.stringify({
-                    access_key: WEB3FORMS_KEY,
-                    subject: "Lyra — contact form message",
-                    from_name: fields.name,
+                    _subject: "Lyra — contact form message",
                     ...fields,
-                    botcheck: "",
                 }),
             })
-            const data = await res.json()
-            if (data.success) {
+            if (res.ok) {
                 setStatus("success")
                 setFields({ name: "", email: "", message: "" })
             } else {

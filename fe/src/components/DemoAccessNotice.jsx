@@ -1,10 +1,10 @@
 import { useState } from "react"
-import { WEB3FORMS_KEY } from "@/components/ContactForm"
+import { FORMSPREE_ENDPOINT } from "@/components/ContactForm"
 
 const OWNER_EMAIL = "ondrej4a@gmail.com"
 
 const MAILTO = `mailto:${OWNER_EMAIL}?subject=${encodeURIComponent("Lyra — demo access request")}&body=${encodeURIComponent(
-    "Hi Ondrej,\n\nI'd like to try the Lyra demo.\n\nEmail on my Spotify account: \n\nThanks!"
+    "Hi Andrej,\n\nI'd like to try the Lyra demo.\n\nEmail on my Spotify account: \n\nThanks!"
 )}`
 
 /**
@@ -15,7 +15,7 @@ const MAILTO = `mailto:${OWNER_EMAIL}?subject=${encodeURIComponent("Lyra — dem
  * users straight to Spotify, so this has to be visible on the landing page —
  * by the time they reach Spotify it is too late to explain.
  *
- * Sends the requester's Spotify account email through Web3Forms (same channel
+ * Sends the requester's Spotify account email through Formspree (same channel
  * as the contact form), with a plain mailto: fallback.
  */
 export default function DemoAccessNotice() {
@@ -29,13 +29,11 @@ export default function DemoAccessNotice() {
         if (botcheck) return // honeypot tripped — silently drop
         setStatus("submitting")
         try {
-            const res = await fetch("https://api.web3forms.com/submit", {
+            const res = await fetch(FORMSPREE_ENDPOINT, {
                 method: "POST",
                 headers: { "Content-Type": "application/json", Accept: "application/json" },
                 body: JSON.stringify({
-                    access_key: WEB3FORMS_KEY,
-                    subject: "Lyra — demo access request",
-                    from_name: "Lyra landing page",
+                    _subject: "Lyra — demo access request",
                     email,
                     message:
                         `Demo access request.\n\nSpotify account email: ${email}\n` +
@@ -43,8 +41,7 @@ export default function DemoAccessNotice() {
                         `\nAdd this address to the Spotify app's allowed users.`,
                 }),
             })
-            const data = await res.json()
-            setStatus(data.success ? "success" : "error")
+            setStatus(res.ok ? "success" : "error")
         } catch {
             setStatus("error")
         }
